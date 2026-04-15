@@ -1,0 +1,186 @@
+{
+  "results": [
+    {
+      "problem_id": "problem_01",
+      "instance_id": "gaia_validation_0002",
+      "filename": "04a04a9b-226c-43fd-b319-d5e89743676f.json",
+      "all_error_steps": [
+        43,
+        44,
+        38,
+        40,
+        42,
+        9,
+        15,
+        18,
+        24,
+        27,
+        33
+      ],
+      "critical_nodes": [
+        {
+          "step": 9,
+          "agent": "WebSurfer",
+          "error_type": "TOOL",
+          "what_went_wrong": "The agent clicks on 'Volume 647' which is from 2025, not 2020, indicating a failure to correctly identify and select the target volume for January 2020 (Volume 577)."
+        }
+      ],
+      "critical_steps": [
+        9
+      ],
+      "last_critical_step": 9,
+      "status": "success"
+    },
+    {
+      "problem_id": "problem_02",
+      "instance_id": "gaia_validation_0003",
+      "filename": "14569e28-c88c-43e4-8c32-097d35b9a67d.json",
+      "all_error_steps": [
+        16,
+        18,
+        19
+      ],
+      "critical_nodes": [
+        {
+          "step": 16,
+          "agent": "Coder",
+          "error_type": "REASONING",
+          "what_went_wrong": "The agent incorrectly assumes that 'r' must be replaced with '.F' and that adding a dot is sufficient, but in Unlambda, 'r' is a valid combinator equivalent to '.\\n'. The issue is not that 'r' is syntactically wrong, but that it outputs a newline. The code as given already starts with 'r', followed by a long chain of `.x` combinators ending in 'i'. The actual problem is that the string output starts after 'r', so the output would be a newline followed by 'For penguins'. However, the existing code already uses proper `.x` syntax for each character, including '.F', so no 'dot' is missing. The agent misanalyzed the structure and falsely concluded a dot must be added."
+        }
+      ],
+      "critical_steps": [
+        16
+      ],
+      "last_critical_step": 16,
+      "status": "success"
+    },
+    {
+      "problem_id": "problem_03",
+      "instance_id": "gaia_validation_0001",
+      "filename": "17b5a6a3-bc87-42e8-b0fb-6ab0781ef2cc.json",
+      "all_error_steps": [
+        2,
+        5,
+        8,
+        11,
+        14,
+        17,
+        22,
+        37,
+        40
+      ],
+      "critical_nodes": [
+        {
+          "step": 2,
+          "agent": "MagenticOneOrchestrator",
+          "error_type": "SEARCH",
+          "what_went_wrong": "The orchestrator instructed the WebSurfer to search for 'Amphiprion ocellaris' directly on the homepage, but the USGS NAS database does not support direct searches via the homepage search bar. The correct method is to navigate to the Advanced Text Query page first, which was not specified."
+        }
+      ],
+      "critical_steps": [
+        2
+      ],
+      "last_critical_step": 2,
+      "status": "success"
+    },
+    {
+      "problem_id": "problem_04",
+      "instance_id": "gaia_validation_0005",
+      "filename": "32102e3e-d12a-4209-9163-7b3a104efe5d.json",
+      "all_error_steps": [
+        3,
+        4
+      ],
+      "critical_nodes": [
+        {
+          "step": 3,
+          "agent": "FileSurfer",
+          "error_type": "INFORMATION",
+          "what_went_wrong": "FileSurfer misidentified the format rows; 'Blu-Ray' is a header row, not a data entry. The actual Blu-Ray titles are listed below it, but the agent failed to correctly parse or distinguish the format section, leading to incorrect data interpretation."
+        }
+      ],
+      "critical_steps": [
+        3
+      ],
+      "last_critical_step": 3,
+      "status": "success"
+    },
+    {
+      "problem_id": "problem_05",
+      "instance_id": "gaia_validation_0007",
+      "filename": "3627a8be-a77f-41bb-b807-7e1bd4c0ebdf.json",
+      "all_error_steps": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        32,
+        35,
+        38,
+        42,
+        45,
+        50,
+        54,
+        57
+      ],
+      "critical_nodes": [
+        {
+          "step": 25,
+          "agent": "WebSurfer",
+          "error_type": "INFORMATION",
+          "what_went_wrong": "The search result on Google Scholar was misinterpreted; the paper from aclanthology.org is a 2026 paper that only quotes the original question verbatim and does not provide the actual species or article. The agent failed to recognize this and treated it as a valid source."
+        }
+      ],
+      "critical_steps": [
+        25
+      ],
+      "last_critical_step": 25,
+      "status": "success"
+    },
+    {
+      "problem_id": "problem_06",
+      "instance_id": "gaia_validation_0004",
+      "filename": "e1fc63a2-da7a-432f-be78-7c4a95598703.json",
+      "all_error_steps": [
+        9,
+        8,
+        10
+      ],
+      "critical_nodes": [
+        {
+          "step": 8,
+          "agent": "WebSurfer",
+          "error_type": "INFORMATION",
+          "what_went_wrong": "The WebSurfer failed to extract or report the minimum perigee value from the Wikipedia page after navigating to it. The page was loaded, but no attempt was made to locate or communicate the required data."
+        }
+      ],
+      "critical_steps": [
+        8
+      ],
+      "last_critical_step": 8,
+      "status": "success"
+    },
+    {
+      "problem_id": "problem_07",
+      "instance_id": "gaia_validation_0009",
+      "filename": "ec09fa32-d03f-4bf8-84b0-1f16922c3ae4.json",
+      "all_error_steps": [
+        2
+      ],
+      "critical_nodes": [
+        {
+          "step": 2,
+          "agent": "MagenticOneOrchestrator",
+          "error_type": "REASONING",
+          "what_went_wrong": "The agent incorrectly claims that ball 100 is guaranteed to be ejected by a piston. This is false because the ejection mechanism depends on the position of the ball on the platform and the random firing of pistons. Ball 100 could end up in any position when it enters the platform, and there is no guarantee it will be struck by a piston; it could be released without ejection depending on the sequence of piston firings."
+        }
+      ],
+      "critical_steps": [
+        2
+      ],
+      "last_critical_step": 2,
+      "status": "success"
+    }
+  ]
+}

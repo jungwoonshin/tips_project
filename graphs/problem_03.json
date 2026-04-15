@@ -1,0 +1,245 @@
+{
+  "problem_id": "problem_03",
+  "num_steps": 41,
+  "model_used": "vllm on QuantTrio/Qwen3-235B-A22B-Instruct-2507-AWQ",
+  "edges": [
+    {
+      "source": 1,
+      "target": 2,
+      "reason": "Orchestrator step 1 sets the initial plan that step 2 refines."
+    },
+    {
+      "source": 1,
+      "target": 5,
+      "reason": "Step 5 continues the plan from Orchestrator step 1 to search for the species."
+    },
+    {
+      "source": 1,
+      "target": 8,
+      "reason": "Step 8 executes the ongoing plan to search for clownfish records."
+    },
+    {
+      "source": 1,
+      "target": 11,
+      "reason": "Step 11 continues the same high-level plan to retrieve pre-2020 records."
+    },
+    {
+      "source": 1,
+      "target": 14,
+      "reason": "Step 14 is part of the persistent plan to search for clownfish sightings."
+    },
+    {
+      "source": 1,
+      "target": 17,
+      "reason": "Step 17 continues the overarching plan to find clownfish records before 2020."
+    },
+    {
+      "source": 1,
+      "target": 20,
+      "reason": "Step 20 resets due to earlier failures, but still under the original plan."
+    },
+    {
+      "source": 1,
+      "target": 21,
+      "reason": "Step 21 re-articulates the original plan after a reset."
+    },
+    {
+      "source": 1,
+      "target": 22,
+      "reason": "Step 22 executes the plan to search via advanced query, initiated in step 1."
+    },
+    {
+      "source": 1,
+      "target": 25,
+      "reason": "Step 25 continues the plan to access advanced text queries for the species."
+    },
+    {
+      "source": 1,
+      "target": 28,
+      "reason": "Step 28 continues the plan to navigate to advanced text queries."
+    },
+    {
+      "source": 1,
+      "target": 31,
+      "reason": "Step 31 persists with the plan to search for Amphiprion ocellaris records."
+    },
+    {
+      "source": 1,
+      "target": 34,
+      "reason": "Step 34 follows the plan to use advanced search for the species."
+    },
+    {
+      "source": 1,
+      "target": 37,
+      "reason": "Step 37 executes the plan to input scientific name and date range."
+    },
+    {
+      "source": 1,
+      "target": 40,
+      "reason": "Step 40 concludes the original plan with a final answer."
+    },
+    {
+      "source": 2,
+      "target": 3,
+      "reason": "Step 3 executes the plan to visit USGS site from step 2."
+    },
+    {
+      "source": 2,
+      "target": 22,
+      "reason": "Step 22 refines the earlier plan from step 2 with specific navigation steps."
+    },
+    {
+      "source": 3,
+      "target": 4,
+      "reason": "Step 4 reports the result of the visit_url action in step 3."
+    },
+    {
+      "source": 5,
+      "target": 6,
+      "reason": "Step 6 executes the instruction to input 'Amphiprion ocellaris' into the search bar."
+    },
+    {
+      "source": 6,
+      "target": 7,
+      "reason": "Step 7 is the immediate result of the input_text action in step 6."
+    },
+    {
+      "source": 8,
+      "target": 9,
+      "reason": "Step 9 scrolls up as directed by step 8 to locate the search bar."
+    },
+    {
+      "source": 9,
+      "target": 10,
+      "reason": "Step 10 reports the viewport after the scroll_up action in step 9."
+    },
+    {
+      "source": 11,
+      "target": 12,
+      "reason": "Step 12 inputs text as instructed in step 11."
+    },
+    {
+      "source": 12,
+      "target": 13,
+      "reason": "Step 13 is the result of the input_text action in step 12."
+    },
+    {
+      "source": 14,
+      "target": 15,
+      "reason": "Step 15 scrolls up as instructed in step 14 to access the search bar."
+    },
+    {
+      "source": 15,
+      "target": 16,
+      "reason": "Step 16 reports the viewport after the scroll_up in step 15."
+    },
+    {
+      "source": 17,
+      "target": 18,
+      "reason": "Step 18 inputs 'Amphiprion ocellaris' as instructed in step 17."
+    },
+    {
+      "source": 18,
+      "target": 19,
+      "reason": "Step 19 is the result of the input_text action in step 18."
+    },
+    {
+      "source": 20,
+      "target": 21,
+      "reason": "Step 21 resets the context after the browser reset in step 20."
+    },
+    {
+      "source": 21,
+      "target": 22,
+      "reason": "Step 22 acts on the updated plan from step 21 to navigate to advanced query."
+    },
+    {
+      "source": 22,
+      "target": 23,
+      "reason": "Step 23 visits the USGS URL as instructed in step 22."
+    },
+    {
+      "source": 23,
+      "target": 24,
+      "reason": "Step 24 reports the result of the visit_url in step 23."
+    },
+    {
+      "source": 25,
+      "target": 26,
+      "reason": "Step 26 clicks 'Database & Queries' as instructed in step 25."
+    },
+    {
+      "source": 26,
+      "target": 27,
+      "reason": "Step 27 reports the result of the click action in step 26."
+    },
+    {
+      "source": 28,
+      "target": 29,
+      "reason": "Step 29 repeats the click action from step 28 due to navigation issues."
+    },
+    {
+      "source": 29,
+      "target": 30,
+      "reason": "Step 30 reports the result of the click in step 29."
+    },
+    {
+      "source": 31,
+      "target": 32,
+      "reason": "Step 32 clicks 'Text-based search' as instructed in step 31."
+    },
+    {
+      "source": 32,
+      "target": 33,
+      "reason": "Step 33 reports the result of the click in step 32."
+    },
+    {
+      "source": 34,
+      "target": 35,
+      "reason": "Step 35 clicks 'Advanced' as instructed in step 34."
+    },
+    {
+      "source": 35,
+      "target": 36,
+      "reason": "Step 36 reports the result of the click in step 35."
+    },
+    {
+      "source": 37,
+      "target": 38,
+      "reason": "Step 38 inputs 'Amphiprion ocellaris' as instructed in step 37."
+    },
+    {
+      "source": 38,
+      "target": 39,
+      "reason": "Step 39 displays the result of the input_text action in step 38."
+    },
+    {
+      "source": 39,
+      "target": 40,
+      "reason": "Step 40 interprets the 'No records' result from step 39 to conclude."
+    }
+  ],
+  "stats": {
+    "num_edges": 43,
+    "num_adjacent_edges": 28,
+    "num_skip_edges": 15,
+    "adjacent_ratio": 0.6512,
+    "density": 0.0524,
+    "max_skip_distance": 39,
+    "avg_skip_distance": 21.27,
+    "avg_parents_per_child": 1.1,
+    "multi_parent_fraction": 0.0769,
+    "max_in_degree": 3,
+    "max_out_degree": 15,
+    "is_linked_list": false,
+    "is_under_counted": true
+  },
+  "input_tokens": 7625,
+  "output_tokens": 1807,
+  "latency_seconds": 21.2,
+  "raw_response": "{\n  \"edges\": [\n    {\n      \"source\": 1,\n      \"target\": 2,\n      \"reason\": \"Orchestrator step 1 sets the initial plan that step 2 refines.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 5,\n      \"reason\": \"Step 5 continues the plan from Orchestrator step 1 to search for the species.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 8,\n      \"reason\": \"Step 8 executes the ongoing plan to search for clownfish records.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 11,\n      \"reason\": \"Step 11 continues the same high-level plan to retrieve pre-2020 records.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 14,\n      \"reason\": \"Step 14 is part of the persistent plan to search for clownfish sightings.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 17,\n      \"reason\": \"Step 17 continues the overarching plan to find clownfish records before 2020.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 20,\n      \"reason\": \"Step 20 resets due to earlier failures, but still under the original plan.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 21,\n      \"reason\": \"Step 21 re-articulates the original plan after a reset.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 22,\n      \"reason\": \"Step 22 executes the plan to search via advanced query, initiated in step 1.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 25,\n      \"reason\": \"Step 25 continues the plan to access advanced text queries for the species.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 28,\n      \"reason\": \"Step 28 continues the plan to navigate to advanced text queries.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 31,\n      \"reason\": \"Step 31 persists with the plan to search for Amphiprion ocellaris records.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 34,\n      \"reason\": \"Step 34 follows the plan to use advanced search for the species.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 37,\n      \"reason\": \"Step 37 executes the plan to input scientific name and date range.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 40,\n      \"reason\": \"Step 40 concludes the original plan with a final answer.\"\n    },\n    {\n      \"source\": 2,\n      \"target\": 3,\n      \"reason\": \"Step 3 executes the plan to visit USGS site from step 2.\"\n    },\n    {\n      \"source\": 2,\n      \"target\": 22,\n      \"reason\": \"Step 22 refines the earlier plan from step 2 with specific navigation steps.\"\n    },\n    {\n      \"source\": 3,\n      \"target\": 4,\n      \"reason\": \"Step 4 reports the result of the visit_url action in step 3.\"\n    },\n    {\n      \"source\": 5,\n      \"target\": 6,\n      \"reason\": \"Step 6 executes the instruction to input 'Amphiprion ocellaris' into the search bar.\"\n    },\n    {\n      \"source\": 6,\n      \"target\": 7,\n      \"reason\": \"Step 7 is the immediate result of the input_text action in step 6.\"\n    },\n    {\n      \"source\": 8,\n      \"target\": 9,\n      \"reason\": \"Step 9 scrolls up as directed by step 8 to locate the search bar.\"\n    },\n    {\n      \"source\": 9,\n      \"target\": 10,\n      \"reason\": \"Step 10 reports the viewport after the scroll_up action in step 9.\"\n    },\n    {\n      \"source\": 11,\n      \"target\": 12,\n      \"reason\": \"Step 12 inputs text as instructed in step 11.\"\n    },\n    {\n      \"source\": 12,\n      \"target\": 13,\n      \"reason\": \"Step 13 is the result of the input_text action in step 12.\"\n    },\n    {\n      \"source\": 14,\n      \"target\": 15,\n      \"reason\": \"Step 15 scrolls up as instructed in step 14 to access the search bar.\"\n    },\n    {\n      \"source\": 15,\n      \"target\": 16,\n      \"reason\": \"Step 16 reports the viewport after the scroll_up in step 15.\"\n    },\n    {\n      \"source\": 17,\n      \"target\": 18,\n      \"reason\": \"Step 18 inputs 'Amphiprion ocellaris' as instructed in step 17.\"\n    },\n    {\n      \"source\": 18,\n      \"target\": 19,\n      \"reason\": \"Step 19 is the result of the input_text action in step 18.\"\n    },\n    {\n      \"source\": 20,\n      \"target\": 21,\n      \"reason\": \"Step 21 resets the context after the browser reset in step 20.\"\n    },\n    {\n      \"source\": 21,\n      \"target\": 22,\n      \"reason\": \"Step 22 acts on the updated plan from step 21 to navigate to advanced query.\"\n    },\n    {\n      \"source\": 22,\n      \"target\": 23,\n      \"reason\": \"Step 23 visits the USGS URL as instructed in step 22.\"\n    },\n    {\n      \"source\": 23,\n      \"target\": 24,\n      \"reason\": \"Step 24 reports the result of the visit_url in step 23.\"\n    },\n    {\n      \"source\": 25,\n      \"target\": 26,\n      \"reason\": \"Step 26 clicks 'Database & Queries' as instructed in step 25.\"\n    },\n    {\n      \"source\": 26,\n      \"target\": 27,\n      \"reason\": \"Step 27 reports the result of the click action in step 26.\"\n    },\n    {\n      \"source\": 28,\n      \"target\": 29,\n      \"reason\": \"Step 29 repeats the click action from step 28 due to navigation issues.\"\n    },\n    {\n      \"source\": 29,\n      \"target\": 30,\n      \"reason\": \"Step 30 reports the result of the click in step 29.\"\n    },\n    {\n      \"source\": 31,\n      \"target\": 32,\n      \"reason\": \"Step 32 clicks 'Text-based search' as instructed in step 31.\"\n    },\n    {\n      \"source\": 32,\n      \"target\": 33,\n      \"reason\": \"Step 33 reports the result of the click in step 32.\"\n    },\n    {\n      \"source\": 34,\n      \"target\": 35,\n      \"reason\": \"Step 35 clicks 'Advanced' as instructed in step 34.\"\n    },\n    {\n      \"source\": 35,\n      \"target\": 36,\n      \"reason\": \"Step 36 reports the result of the click in step 35.\"\n    },\n    {\n      \"source\": 37,\n      \"target\": 38,\n      \"reason\": \"Step 38 inputs 'Amphiprion ocellaris' as instructed in step 37.\"\n    },\n    {\n      \"source\": 38,\n      \"target\": 39,\n      \"reason\": \"Step 39 displays the result of the input_text action in step 38.\"\n    },\n    {\n      \"source\": 39,\n      \"target\": 40,\n      \"reason\": \"Step 40 interprets the 'No records' result from step 39 to conclude.\"\n    }\n  ]\n}",
+  "status": "success",
+  "warnings": [
+    "under_counted_parents: only 8% of targets have 2+ parents"
+  ]
+}

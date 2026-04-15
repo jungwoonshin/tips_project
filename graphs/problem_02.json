@@ -1,0 +1,183 @@
+{
+  "problem_id": "problem_02",
+  "num_steps": 20,
+  "model_used": "vllm on QuantTrio/Qwen3-235B-A22B-Instruct-2507-AWQ",
+  "edges": [
+    {
+      "source": 1,
+      "target": 2,
+      "reason": "Orchestrator step 1 sets the overall plan for the task."
+    },
+    {
+      "source": 1,
+      "target": 3,
+      "reason": "WebSurfer acts on the plan from Orchestrator step 1."
+    },
+    {
+      "source": 2,
+      "target": 3,
+      "reason": "Step 2 provides the specific search instruction for Unlambda syntax."
+    },
+    {
+      "source": 3,
+      "target": 4,
+      "reason": "Step 4 reports the result of the web search initiated in step 3."
+    },
+    {
+      "source": 1,
+      "target": 5,
+      "reason": "Orchestrator step 5 continues the plan from step 1."
+    },
+    {
+      "source": 4,
+      "target": 5,
+      "reason": "Step 5 uses the search results from step 4 to decide next action."
+    },
+    {
+      "source": 5,
+      "target": 6,
+      "reason": "Step 6 executes the instruction to click on the Esolang link from step 5."
+    },
+    {
+      "source": 6,
+      "target": 7,
+      "reason": "Step 7 describes the outcome of the click action in step 6."
+    },
+    {
+      "source": 1,
+      "target": 8,
+      "reason": "Orchestrator step 8 continues the overall plan from step 1."
+    },
+    {
+      "source": 7,
+      "target": 8,
+      "reason": "Step 8 uses the result of opening the Esolang page in step 7."
+    },
+    {
+      "source": 8,
+      "target": 9,
+      "reason": "Step 9 instructs to scroll down to find the 'Hello, world!' example."
+    },
+    {
+      "source": 9,
+      "target": 10,
+      "reason": "Step 10 performs the scroll action as instructed in step 9."
+    },
+    {
+      "source": 1,
+      "target": 10,
+      "reason": "Step 10 is part of the ongoing plan from Orchestrator step 1."
+    },
+    {
+      "source": 10,
+      "target": 11,
+      "reason": "Step 11 reports the result after scrolling down in step 10."
+    },
+    {
+      "source": 1,
+      "target": 12,
+      "reason": "Orchestrator step 12 continues the plan from step 1."
+    },
+    {
+      "source": 11,
+      "target": 12,
+      "reason": "Step 12 uses the information from step 11 to decide next action."
+    },
+    {
+      "source": 12,
+      "target": 13,
+      "reason": "Step 13 executes the scroll instruction from step 12."
+    },
+    {
+      "source": 1,
+      "target": 13,
+      "reason": "Step 13 is part of the overall plan from step 1."
+    },
+    {
+      "source": 13,
+      "target": 14,
+      "reason": "Step 14 reports the result of the scroll action in step 13."
+    },
+    {
+      "source": 1,
+      "target": 15,
+      "reason": "Orchestrator step 15 continues the plan from step 1."
+    },
+    {
+      "source": 14,
+      "target": 15,
+      "reason": "Step 15 uses the 'Hello, world!' example seen in step 14."
+    },
+    {
+      "source": 15,
+      "target": 16,
+      "reason": "Step 16 analyzes the code based on the instruction in step 15."
+    },
+    {
+      "source": 1,
+      "target": 16,
+      "reason": "Step 16 is shaped by the initial plan from Orchestrator step 1."
+    },
+    {
+      "source": 14,
+      "target": 16,
+      "reason": "Step 16 uses the 'Hello, world!' example from step 14."
+    },
+    {
+      "source": 16,
+      "target": 17,
+      "reason": "Step 17 refines the analysis from step 16."
+    },
+    {
+      "source": 1,
+      "target": 17,
+      "reason": "Step 17 continues the overall task plan from step 1."
+    },
+    {
+      "source": 17,
+      "target": 18,
+      "reason": "Step 18 provides a more precise answer based on step 17's query."
+    },
+    {
+      "source": 14,
+      "target": 18,
+      "reason": "Step 18 relies on the 'Hello, world!' example from step 14."
+    },
+    {
+      "source": 15,
+      "target": 18,
+      "reason": "Step 18 builds on the analysis task defined in step 15."
+    },
+    {
+      "source": 18,
+      "target": 19,
+      "reason": "Step 19 confirms the conclusion from step 18."
+    },
+    {
+      "source": 1,
+      "target": 19,
+      "reason": "Step 19 aligns with the original task plan from step 1."
+    }
+  ],
+  "stats": {
+    "num_edges": 31,
+    "num_adjacent_edges": 18,
+    "num_skip_edges": 13,
+    "adjacent_ratio": 0.5806,
+    "density": 0.1632,
+    "max_skip_distance": 18,
+    "avg_skip_distance": 9.0,
+    "avg_parents_per_child": 1.72,
+    "multi_parent_fraction": 0.6111,
+    "max_in_degree": 3,
+    "max_out_degree": 11,
+    "is_linked_list": false,
+    "is_under_counted": false
+  },
+  "input_tokens": 6128,
+  "output_tokens": 1255,
+  "latency_seconds": 14.65,
+  "raw_response": "{\n  \"edges\": [\n    {\n      \"source\": 1,\n      \"target\": 2,\n      \"reason\": \"Orchestrator step 1 sets the overall plan for the task.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 3,\n      \"reason\": \"WebSurfer acts on the plan from Orchestrator step 1.\"\n    },\n    {\n      \"source\": 2,\n      \"target\": 3,\n      \"reason\": \"Step 2 provides the specific search instruction for Unlambda syntax.\"\n    },\n    {\n      \"source\": 3,\n      \"target\": 4,\n      \"reason\": \"Step 4 reports the result of the web search initiated in step 3.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 5,\n      \"reason\": \"Orchestrator step 5 continues the plan from step 1.\"\n    },\n    {\n      \"source\": 4,\n      \"target\": 5,\n      \"reason\": \"Step 5 uses the search results from step 4 to decide next action.\"\n    },\n    {\n      \"source\": 5,\n      \"target\": 6,\n      \"reason\": \"Step 6 executes the instruction to click on the Esolang link from step 5.\"\n    },\n    {\n      \"source\": 6,\n      \"target\": 7,\n      \"reason\": \"Step 7 describes the outcome of the click action in step 6.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 8,\n      \"reason\": \"Orchestrator step 8 continues the overall plan from step 1.\"\n    },\n    {\n      \"source\": 7,\n      \"target\": 8,\n      \"reason\": \"Step 8 uses the result of opening the Esolang page in step 7.\"\n    },\n    {\n      \"source\": 8,\n      \"target\": 9,\n      \"reason\": \"Step 9 instructs to scroll down to find the 'Hello, world!' example.\"\n    },\n    {\n      \"source\": 9,\n      \"target\": 10,\n      \"reason\": \"Step 10 performs the scroll action as instructed in step 9.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 10,\n      \"reason\": \"Step 10 is part of the ongoing plan from Orchestrator step 1.\"\n    },\n    {\n      \"source\": 10,\n      \"target\": 11,\n      \"reason\": \"Step 11 reports the result after scrolling down in step 10.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 12,\n      \"reason\": \"Orchestrator step 12 continues the plan from step 1.\"\n    },\n    {\n      \"source\": 11,\n      \"target\": 12,\n      \"reason\": \"Step 12 uses the information from step 11 to decide next action.\"\n    },\n    {\n      \"source\": 12,\n      \"target\": 13,\n      \"reason\": \"Step 13 executes the scroll instruction from step 12.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 13,\n      \"reason\": \"Step 13 is part of the overall plan from step 1.\"\n    },\n    {\n      \"source\": 13,\n      \"target\": 14,\n      \"reason\": \"Step 14 reports the result of the scroll action in step 13.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 15,\n      \"reason\": \"Orchestrator step 15 continues the plan from step 1.\"\n    },\n    {\n      \"source\": 14,\n      \"target\": 15,\n      \"reason\": \"Step 15 uses the 'Hello, world!' example seen in step 14.\"\n    },\n    {\n      \"source\": 15,\n      \"target\": 16,\n      \"reason\": \"Step 16 analyzes the code based on the instruction in step 15.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 16,\n      \"reason\": \"Step 16 is shaped by the initial plan from Orchestrator step 1.\"\n    },\n    {\n      \"source\": 14,\n      \"target\": 16,\n      \"reason\": \"Step 16 uses the 'Hello, world!' example from step 14.\"\n    },\n    {\n      \"source\": 16,\n      \"target\": 17,\n      \"reason\": \"Step 17 refines the analysis from step 16.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 17,\n      \"reason\": \"Step 17 continues the overall task plan from step 1.\"\n    },\n    {\n      \"source\": 17,\n      \"target\": 18,\n      \"reason\": \"Step 18 provides a more precise answer based on step 17's query.\"\n    },\n    {\n      \"source\": 14,\n      \"target\": 18,\n      \"reason\": \"Step 18 relies on the 'Hello, world!' example from step 14.\"\n    },\n    {\n      \"source\": 15,\n      \"target\": 18,\n      \"reason\": \"Step 18 builds on the analysis task defined in step 15.\"\n    },\n    {\n      \"source\": 18,\n      \"target\": 19,\n      \"reason\": \"Step 19 confirms the conclusion from step 18.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 19,\n      \"reason\": \"Step 19 aligns with the original task plan from step 1.\"\n    }\n  ]\n}",
+  "status": "success",
+  "warnings": []
+}

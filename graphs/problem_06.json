@@ -1,0 +1,263 @@
+{
+  "problem_id": "problem_06",
+  "num_steps": 45,
+  "model_used": "vllm on QuantTrio/Qwen3-235B-A22B-Instruct-2507-AWQ",
+  "edges": [
+    {
+      "source": 1,
+      "target": 2,
+      "reason": "Orchestrator step 1 sets the overall plan for the task."
+    },
+    {
+      "source": 1,
+      "target": 3,
+      "reason": "Step 3 executes the plan to visit GitHub issues page from step 1."
+    },
+    {
+      "source": 2,
+      "target": 3,
+      "reason": "Step 2 directs visiting the GitHub issues page for filtering."
+    },
+    {
+      "source": 1,
+      "target": 5,
+      "reason": "Step 5 continues the plan initiated in step 1 to find relevant issues."
+    },
+    {
+      "source": 2,
+      "target": 5,
+      "reason": "Step 5 refines the filtering instructions first given in step 2."
+    },
+    {
+      "source": 5,
+      "target": 6,
+      "reason": "Step 6 implements the filtering instruction from step 5."
+    },
+    {
+      "source": 1,
+      "target": 8,
+      "reason": "Step 8 continues the information-gathering plan from step 1."
+    },
+    {
+      "source": 5,
+      "target": 8,
+      "reason": "Step 8 adjusts the plan due to potential label spelling issues from step 5."
+    },
+    {
+      "source": 8,
+      "target": 9,
+      "reason": "Step 9 executes the instruction to verify label spelling from step 8."
+    },
+    {
+      "source": 1,
+      "target": 11,
+      "reason": "Step 11 advances the original plan to locate the correct issue."
+    },
+    {
+      "source": 8,
+      "target": 11,
+      "reason": "Step 11 uses the verified label name discovered in step 8."
+    },
+    {
+      "source": 9,
+      "target": 11,
+      "reason": "Step 9 confirmed the correct label format used in step 11."
+    },
+    {
+      "source": 11,
+      "target": 12,
+      "reason": "Step 12 executes the plan to navigate to issues page from step 11."
+    },
+    {
+      "source": 1,
+      "target": 14,
+      "reason": "Step 14 continues the overarching plan from step 1."
+    },
+    {
+      "source": 11,
+      "target": 14,
+      "reason": "Step 14 refines the search query introduced in step 11."
+    },
+    {
+      "source": 14,
+      "target": 15,
+      "reason": "Step 15 implements the search query specified in step 14."
+    },
+    {
+      "source": 1,
+      "target": 17,
+      "reason": "Step 17 continues the plan to identify the oldest issue."
+    },
+    {
+      "source": 14,
+      "target": 17,
+      "reason": "Step 17 builds on the search from step 14 to sort results."
+    },
+    {
+      "source": 17,
+      "target": 18,
+      "reason": "Step 18 executes the sort instruction from step 17."
+    },
+    {
+      "source": 1,
+      "target": 20,
+      "reason": "Step 20 continues the plan to identify and open the target issue."
+    },
+    {
+      "source": 17,
+      "target": 20,
+      "reason": "Step 20 acts on the sorted results from step 17's instruction."
+    },
+    {
+      "source": 20,
+      "target": 21,
+      "reason": "Step 21 executes the instruction to open issue #10881 from step 20."
+    },
+    {
+      "source": 1,
+      "target": 23,
+      "reason": "Step 23 continues the original plan to extract label addition date."
+    },
+    {
+      "source": 20,
+      "target": 23,
+      "reason": "Step 23 builds on the issue selection made in step 20."
+    },
+    {
+      "source": 23,
+      "target": 24,
+      "reason": "Step 24 scrolls to locate the label addition event mentioned in step 23."
+    },
+    {
+      "source": 1,
+      "target": 26,
+      "reason": "Step 26 continues the plan to extract the exact label addition date."
+    },
+    {
+      "source": 23,
+      "target": 26,
+      "reason": "Step 26 refines the focus on 'mattip' label addition from step 23."
+    },
+    {
+      "source": 26,
+      "target": 27,
+      "reason": "Step 27 scrolls up to find the label addition event from step 26."
+    },
+    {
+      "source": 1,
+      "target": 29,
+      "reason": "Step 29 continues the effort to locate the label addition date."
+    },
+    {
+      "source": 26,
+      "target": 29,
+      "reason": "Step 29 provides more detail on the event to locate from step 26."
+    },
+    {
+      "source": 29,
+      "target": 30,
+      "reason": "Step 30 scrolls down to find the label addition event from step 29."
+    },
+    {
+      "source": 1,
+      "target": 32,
+      "reason": "Step 32 continues the plan to extract the label addition date."
+    },
+    {
+      "source": 29,
+      "target": 32,
+      "reason": "Step 32 repeats the request to find the label addition date from step 29."
+    },
+    {
+      "source": 32,
+      "target": 33,
+      "reason": "Step 33 scrolls up to locate the event mentioned in step 32."
+    },
+    {
+      "source": 1,
+      "target": 35,
+      "reason": "Step 35 continues the effort to extract the label addition date."
+    },
+    {
+      "source": 32,
+      "target": 35,
+      "reason": "Step 35 repeats the instruction from step 32 to find the date."
+    },
+    {
+      "source": 35,
+      "target": 36,
+      "reason": "Step 36 scrolls down to locate the event from step 35."
+    },
+    {
+      "source": 1,
+      "target": 38,
+      "reason": "Step 38 continues the plan to extract the label addition date."
+    },
+    {
+      "source": 35,
+      "target": 38,
+      "reason": "Step 38 repeats the request from step 35 to find the date."
+    },
+    {
+      "source": 38,
+      "target": 39,
+      "reason": "Step 39 scrolls up to find the event mentioned in step 38."
+    },
+    {
+      "source": 1,
+      "target": 41,
+      "reason": "Step 41 continues the plan to extract the exact label addition date."
+    },
+    {
+      "source": 38,
+      "target": 41,
+      "reason": "Step 41 refines the request to get the exact date from step 38."
+    },
+    {
+      "source": 41,
+      "target": 42,
+      "reason": "Step 42 uses AI to answer the date question posed in step 41."
+    },
+    {
+      "source": 1,
+      "target": 43,
+      "reason": "Step 43 provides the final answer based on the original task in step 1."
+    },
+    {
+      "source": 42,
+      "target": 43,
+      "reason": "Step 43 summarizes the answer from step 42's analysis."
+    },
+    {
+      "source": 1,
+      "target": 44,
+      "reason": "Step 44 concludes the task initiated in step 1."
+    },
+    {
+      "source": 43,
+      "target": 44,
+      "reason": "Step 44 uses the answer from step 43 to finalize the response."
+    }
+  ],
+  "stats": {
+    "num_edges": 47,
+    "num_adjacent_edges": 17,
+    "num_skip_edges": 30,
+    "adjacent_ratio": 0.3617,
+    "density": 0.0475,
+    "max_skip_distance": 43,
+    "avg_skip_distance": 13.8,
+    "avg_parents_per_child": 1.57,
+    "multi_parent_fraction": 0.5333,
+    "max_in_degree": 3,
+    "max_out_degree": 17,
+    "is_linked_list": false,
+    "is_under_counted": false
+  },
+  "input_tokens": 5239,
+  "output_tokens": 1901,
+  "latency_seconds": 21.6,
+  "raw_response": "{\n  \"edges\": [\n    {\n      \"source\": 1,\n      \"target\": 2,\n      \"reason\": \"Orchestrator step 1 sets the overall plan for the task.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 3,\n      \"reason\": \"Step 3 executes the plan to visit GitHub issues page from step 1.\"\n    },\n    {\n      \"source\": 2,\n      \"target\": 3,\n      \"reason\": \"Step 2 directs visiting the GitHub issues page for filtering.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 5,\n      \"reason\": \"Step 5 continues the plan initiated in step 1 to find relevant issues.\"\n    },\n    {\n      \"source\": 2,\n      \"target\": 5,\n      \"reason\": \"Step 5 refines the filtering instructions first given in step 2.\"\n    },\n    {\n      \"source\": 5,\n      \"target\": 6,\n      \"reason\": \"Step 6 implements the filtering instruction from step 5.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 8,\n      \"reason\": \"Step 8 continues the information-gathering plan from step 1.\"\n    },\n    {\n      \"source\": 5,\n      \"target\": 8,\n      \"reason\": \"Step 8 adjusts the plan due to potential label spelling issues from step 5.\"\n    },\n    {\n      \"source\": 8,\n      \"target\": 9,\n      \"reason\": \"Step 9 executes the instruction to verify label spelling from step 8.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 11,\n      \"reason\": \"Step 11 advances the original plan to locate the correct issue.\"\n    },\n    {\n      \"source\": 8,\n      \"target\": 11,\n      \"reason\": \"Step 11 uses the verified label name discovered in step 8.\"\n    },\n    {\n      \"source\": 9,\n      \"target\": 11,\n      \"reason\": \"Step 9 confirmed the correct label format used in step 11.\"\n    },\n    {\n      \"source\": 11,\n      \"target\": 12,\n      \"reason\": \"Step 12 executes the plan to navigate to issues page from step 11.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 14,\n      \"reason\": \"Step 14 continues the overarching plan from step 1.\"\n    },\n    {\n      \"source\": 11,\n      \"target\": 14,\n      \"reason\": \"Step 14 refines the search query introduced in step 11.\"\n    },\n    {\n      \"source\": 14,\n      \"target\": 15,\n      \"reason\": \"Step 15 implements the search query specified in step 14.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 17,\n      \"reason\": \"Step 17 continues the plan to identify the oldest issue.\"\n    },\n    {\n      \"source\": 14,\n      \"target\": 17,\n      \"reason\": \"Step 17 builds on the search from step 14 to sort results.\"\n    },\n    {\n      \"source\": 17,\n      \"target\": 18,\n      \"reason\": \"Step 18 executes the sort instruction from step 17.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 20,\n      \"reason\": \"Step 20 continues the plan to identify and open the target issue.\"\n    },\n    {\n      \"source\": 17,\n      \"target\": 20,\n      \"reason\": \"Step 20 acts on the sorted results from step 17's instruction.\"\n    },\n    {\n      \"source\": 20,\n      \"target\": 21,\n      \"reason\": \"Step 21 executes the instruction to open issue #10881 from step 20.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 23,\n      \"reason\": \"Step 23 continues the original plan to extract label addition date.\"\n    },\n    {\n      \"source\": 20,\n      \"target\": 23,\n      \"reason\": \"Step 23 builds on the issue selection made in step 20.\"\n    },\n    {\n      \"source\": 23,\n      \"target\": 24,\n      \"reason\": \"Step 24 scrolls to locate the label addition event mentioned in step 23.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 26,\n      \"reason\": \"Step 26 continues the plan to extract the exact label addition date.\"\n    },\n    {\n      \"source\": 23,\n      \"target\": 26,\n      \"reason\": \"Step 26 refines the focus on 'mattip' label addition from step 23.\"\n    },\n    {\n      \"source\": 26,\n      \"target\": 27,\n      \"reason\": \"Step 27 scrolls up to find the label addition event from step 26.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 29,\n      \"reason\": \"Step 29 continues the effort to locate the label addition date.\"\n    },\n    {\n      \"source\": 26,\n      \"target\": 29,\n      \"reason\": \"Step 29 provides more detail on the event to locate from step 26.\"\n    },\n    {\n      \"source\": 29,\n      \"target\": 30,\n      \"reason\": \"Step 30 scrolls down to find the label addition event from step 29.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 32,\n      \"reason\": \"Step 32 continues the plan to extract the label addition date.\"\n    },\n    {\n      \"source\": 29,\n      \"target\": 32,\n      \"reason\": \"Step 32 repeats the request to find the label addition date from step 29.\"\n    },\n    {\n      \"source\": 32,\n      \"target\": 33,\n      \"reason\": \"Step 33 scrolls up to locate the event mentioned in step 32.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 35,\n      \"reason\": \"Step 35 continues the effort to extract the label addition date.\"\n    },\n    {\n      \"source\": 32,\n      \"target\": 35,\n      \"reason\": \"Step 35 repeats the instruction from step 32 to find the date.\"\n    },\n    {\n      \"source\": 35,\n      \"target\": 36,\n      \"reason\": \"Step 36 scrolls down to locate the event from step 35.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 38,\n      \"reason\": \"Step 38 continues the plan to extract the label addition date.\"\n    },\n    {\n      \"source\": 35,\n      \"target\": 38,\n      \"reason\": \"Step 38 repeats the request from step 35 to find the date.\"\n    },\n    {\n      \"source\": 38,\n      \"target\": 39,\n      \"reason\": \"Step 39 scrolls up to find the event mentioned in step 38.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 41,\n      \"reason\": \"Step 41 continues the plan to extract the exact label addition date.\"\n    },\n    {\n      \"source\": 38,\n      \"target\": 41,\n      \"reason\": \"Step 41 refines the request to get the exact date from step 38.\"\n    },\n    {\n      \"source\": 41,\n      \"target\": 42,\n      \"reason\": \"Step 42 uses AI to answer the date question posed in step 41.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 43,\n      \"reason\": \"Step 43 provides the final answer based on the original task in step 1.\"\n    },\n    {\n      \"source\": 42,\n      \"target\": 43,\n      \"reason\": \"Step 43 summarizes the answer from step 42's analysis.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 44,\n      \"reason\": \"Step 44 concludes the task initiated in step 1.\"\n    },\n    {\n      \"source\": 43,\n      \"target\": 44,\n      \"reason\": \"Step 44 uses the answer from step 43 to finalize the response.\"\n    }\n  ]\n}",
+  "status": "success",
+  "warnings": []
+}

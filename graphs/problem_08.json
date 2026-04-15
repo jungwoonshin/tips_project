@@ -1,0 +1,441 @@
+{
+  "problem_id": "problem_08",
+  "num_steps": 75,
+  "model_used": "vllm on QuantTrio/Qwen3-235B-A22B-Instruct-2507-AWQ",
+  "edges": [
+    {
+      "source": 1,
+      "target": 2,
+      "reason": "Orchestrator provided the plan for the WebSurfer to execute."
+    },
+    {
+      "source": 1,
+      "target": 5,
+      "reason": "Orchestrator's plan to retrieve axis labels from the 2022 paper."
+    },
+    {
+      "source": 1,
+      "target": 10,
+      "reason": "Orchestrator's overarching goal to find the 2016 paper motivates the navigation."
+    },
+    {
+      "source": 1,
+      "target": 18,
+      "reason": "Orchestrator's instruction to search for the 2016 paper in physics.soc-ph."
+    },
+    {
+      "source": 1,
+      "target": 47,
+      "reason": "Orchestrator reiterates the plan to locate the 2016 paper using direct URL."
+    },
+    {
+      "source": 1,
+      "target": 53,
+      "reason": "Orchestrator assigns task to analyze paper 1608.03915 for relevant terms."
+    },
+    {
+      "source": 1,
+      "target": 59,
+      "reason": "Orchestrator directs search for papers submitted near August 11, 2016."
+    },
+    {
+      "source": 1,
+      "target": 62,
+      "reason": "Orchestrator instructs checking submission history for exact dates."
+    },
+    {
+      "source": 1,
+      "target": 68,
+      "reason": "Orchestrator specifies checking entry [50] for submission date."
+    },
+    {
+      "source": 1,
+      "target": 71,
+      "reason": "Orchestrator directs analysis of paper 1608.03637 for 'egalitarian' usage."
+    },
+    {
+      "source": 2,
+      "target": 3,
+      "reason": "WebSurfer executes the search based on Orchestrator's instruction."
+    },
+    {
+      "source": 3,
+      "target": 4,
+      "reason": "WebSurfer displays the search results from the issued query."
+    },
+    {
+      "source": 4,
+      "target": 5,
+      "reason": "Search results show the 2022 paper, informing the next navigation step."
+    },
+    {
+      "source": 5,
+      "target": 6,
+      "reason": "Orchestrator instructs to click on the arXiv paper link."
+    },
+    {
+      "source": 6,
+      "target": 7,
+      "reason": "Click action opens a new tab, recorded as a state change."
+    },
+    {
+      "source": 7,
+      "target": 8,
+      "reason": "WebSurfer loads the content of the clicked paper in the new tab."
+    },
+    {
+      "source": 8,
+      "target": 9,
+      "reason": "The paper's content reveals the axis labels, shaping the next step."
+    },
+    {
+      "source": 9,
+      "target": 10,
+      "reason": "The identified labels guide the need to search for the 2016 paper."
+    },
+    {
+      "source": 10,
+      "target": 11,
+      "reason": "WebSurfer navigates to arXiv.org as instructed."
+    },
+    {
+      "source": 11,
+      "target": 12,
+      "reason": "The visit to arXiv.org sets the stage for category navigation."
+    },
+    {
+      "source": 12,
+      "target": 13,
+      "reason": "Orchestrator reiterates the need to find the 2016 paper."
+    },
+    {
+      "source": 13,
+      "target": 14,
+      "reason": "WebSurfer clicks on the Physics category to navigate deeper."
+    },
+    {
+      "source": 14,
+      "target": 15,
+      "reason": "Navigation to Physics archive prepares for subcategory selection."
+    },
+    {
+      "source": 15,
+      "target": 16,
+      "reason": "Orchestrator reiterates the search goal for the 2016 paper."
+    },
+    {
+      "source": 16,
+      "target": 17,
+      "reason": "WebSurfer inputs search terms to locate the 2016 paper."
+    },
+    {
+      "source": 17,
+      "target": 18,
+      "reason": "Search results show papers, but not filtered by date yet."
+    },
+    {
+      "source": 18,
+      "target": 19,
+      "reason": "Orchestrator instructs use of advanced search for precise filtering."
+    },
+    {
+      "source": 19,
+      "target": 20,
+      "reason": "WebSurfer navigates to the arXiv search page."
+    },
+    {
+      "source": 20,
+      "target": 21,
+      "reason": "Orchestrator gives detailed instructions for advanced search."
+    },
+    {
+      "source": 21,
+      "target": 22,
+      "reason": "WebSurfer clicks to access advanced search features."
+    },
+    {
+      "source": 22,
+      "target": 23,
+      "reason": "Clicking opens the advanced search interface."
+    },
+    {
+      "source": 23,
+      "target": 24,
+      "reason": "Orchestrator clarifies the exact search parameters needed."
+    },
+    {
+      "source": 24,
+      "target": 25,
+      "reason": "WebSurfer attempts to expand Physics options for subtopic selection."
+    },
+    {
+      "source": 25,
+      "target": 26,
+      "reason": "Clicking Physics expands the subtopic options."
+    },
+    {
+      "source": 26,
+      "target": 27,
+      "reason": "Orchestrator reiterates the need to select physics.soc-ph and set date."
+    },
+    {
+      "source": 27,
+      "target": 28,
+      "reason": "WebSurfer clicks to select Physics category."
+    },
+    {
+      "source": 28,
+      "target": 29,
+      "reason": "Clicking Physics triggers a page update for subtopic selection."
+    },
+    {
+      "source": 29,
+      "target": 30,
+      "reason": "Orchestrator repeats instruction due to interface navigation issues."
+    },
+    {
+      "source": 30,
+      "target": 31,
+      "reason": "WebSurfer attempts to expand Physics subtopic dropdown."
+    },
+    {
+      "source": 31,
+      "target": 32,
+      "reason": "Interface state shows navigation attempt but no success."
+    },
+    {
+      "source": 32,
+      "target": 33,
+      "reason": "Orchestrator repeats instruction due to lack of progress."
+    },
+    {
+      "source": 33,
+      "target": 34,
+      "reason": "WebSurfer attempts to open subtopic dropdown."
+    },
+    {
+      "source": 34,
+      "target": 35,
+      "reason": "Interface state shows continued navigation attempt."
+    },
+    {
+      "source": 35,
+      "target": 36,
+      "reason": "Orchestrator repeats instruction after failed attempts."
+    },
+    {
+      "source": 36,
+      "target": 37,
+      "reason": "WebSurfer attempts to open subtopic dropdown again."
+    },
+    {
+      "source": 37,
+      "target": 38,
+      "reason": "Interface state shows repeated navigation attempt."
+    },
+    {
+      "source": 38,
+      "target": 39,
+      "reason": "Orchestrator repeats instruction due to persistent failure."
+    },
+    {
+      "source": 39,
+      "target": 40,
+      "reason": "WebSurfer attempts to open subtopic dropdown."
+    },
+    {
+      "source": 40,
+      "target": 41,
+      "reason": "Interface state shows dropdown interaction attempt."
+    },
+    {
+      "source": 41,
+      "target": 42,
+      "reason": "Orchestrator shifts strategy after repeated failures."
+    },
+    {
+      "source": 42,
+      "target": 43,
+      "reason": "WebSurfer attempts to open subtopic dropdown again."
+    },
+    {
+      "source": 43,
+      "target": 44,
+      "reason": "Interface state shows continued interaction attempt."
+    },
+    {
+      "source": 44,
+      "target": 45,
+      "reason": "WebSurfer resets browser due to navigation issues."
+    },
+    {
+      "source": 45,
+      "target": 46,
+      "reason": "Orchestrator restarts the process with updated fact sheet."
+    },
+    {
+      "source": 46,
+      "target": 47,
+      "reason": "Orchestrator devises new plan to use direct URL for paper list."
+    },
+    {
+      "source": 47,
+      "target": 48,
+      "reason": "WebSurfer navigates to the August 2016 paper list."
+    },
+    {
+      "source": 48,
+      "target": 49,
+      "reason": "WebSurfer loads the list of 129 papers in physics.soc-ph for August 2016."
+    },
+    {
+      "source": 49,
+      "target": 50,
+      "reason": "Orchestrator instructs scanning the list for submission dates."
+    },
+    {
+      "source": 50,
+      "target": 51,
+      "reason": "WebSurfer analyzes the page to infer submission date patterns."
+    },
+    {
+      "source": 51,
+      "target": 52,
+      "reason": "WebSurfer reports that IDs suggest chronological order but no exact dates."
+    },
+    {
+      "source": 52,
+      "target": 53,
+      "reason": "Orchestrator assigns next paper to check based on ID proximity."
+    },
+    {
+      "source": 53,
+      "target": 54,
+      "reason": "WebSurfer searches for the specific paper ID not found on current page."
+    },
+    {
+      "source": 54,
+      "target": 55,
+      "reason": "Search results do not directly yield the paper, requiring direct URL."
+    },
+    {
+      "source": 55,
+      "target": 56,
+      "reason": "Orchestror instructs direct navigation to the paper URL."
+    },
+    {
+      "source": 56,
+      "target": 57,
+      "reason": "WebSurfer navigates directly to the paper's abstract page."
+    },
+    {
+      "source": 57,
+      "target": 58,
+      "reason": "WebSurfer loads the paper with submission date August 12, 2016."
+    },
+    {
+      "source": 58,
+      "target": 59,
+      "reason": "Orchestrator adjusts strategy to scan full paper list for correct date."
+    },
+    {
+      "source": 59,
+      "target": 60,
+      "reason": "WebSurfer navigates back to the full paper list."
+    },
+    {
+      "source": 60,
+      "target": 61,
+      "reason": "WebSurfer reloads the paper list for August 2016."
+    },
+    {
+      "source": 61,
+      "target": 62,
+      "reason": "Orchestrator instructs checking submission history for papers near August 11."
+    },
+    {
+      "source": 62,
+      "target": 63,
+      "reason": "WebSurfer scrolls down to view more papers in the list."
+    },
+    {
+      "source": 63,
+      "target": 64,
+      "reason": "Scrolling reveals more entries for manual inspection."
+    },
+    {
+      "source": 64,
+      "target": 65,
+      "reason": "Orchestrator continues instruction to inspect papers for submission date."
+    },
+    {
+      "source": 65,
+      "target": 66,
+      "reason": "WebSurfer scrolls down to continue browsing the list."
+    },
+    {
+      "source": 66,
+      "target": 67,
+      "reason": "Scrolling reveals more papers for potential inspection."
+    },
+    {
+      "source": 67,
+      "target": 68,
+      "reason": "Orchestrator specifies checking entry [50] arXiv:1608.03455."
+    },
+    {
+      "source": 68,
+      "target": 69,
+      "reason": "WebSurfer scrolls to bring entry [50] into view."
+    },
+    {
+      "source": 69,
+      "target": 70,
+      "reason": "Scrolling positions the viewport closer to the target entry."
+    },
+    {
+      "source": 70,
+      "target": 71,
+      "reason": "Orchestrator identifies paper 1608.03637 as submitted on August 11, 2016."
+    },
+    {
+      "source": 71,
+      "target": 72,
+      "reason": "WebSurfer navigates directly to the paper's abstract page."
+    },
+    {
+      "source": 72,
+      "target": 73,
+      "reason": "WebSurfer loads the paper submitted on August 11, 2016."
+    },
+    {
+      "source": 73,
+      "target": 74,
+      "reason": "The paper's content uses 'egalitarian' to describe a society type."
+    }
+  ],
+  "stats": {
+    "num_edges": 82,
+    "num_adjacent_edges": 73,
+    "num_skip_edges": 9,
+    "adjacent_ratio": 0.8902,
+    "density": 0.0295,
+    "max_skip_distance": 70,
+    "avg_skip_distance": 42.67,
+    "avg_parents_per_child": 1.12,
+    "multi_parent_fraction": 0.1233,
+    "max_in_degree": 2,
+    "max_out_degree": 10,
+    "is_linked_list": true,
+    "is_under_counted": true
+  },
+  "input_tokens": 15303,
+  "output_tokens": 3190,
+  "latency_seconds": 38.88,
+  "raw_response": "{\n  \"edges\": [\n    {\n      \"source\": 1,\n      \"target\": 2,\n      \"reason\": \"Orchestrator provided the plan for the WebSurfer to execute.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 5,\n      \"reason\": \"Orchestrator's plan to retrieve axis labels from the 2022 paper.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 10,\n      \"reason\": \"Orchestrator's overarching goal to find the 2016 paper motivates the navigation.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 18,\n      \"reason\": \"Orchestrator's instruction to search for the 2016 paper in physics.soc-ph.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 47,\n      \"reason\": \"Orchestrator reiterates the plan to locate the 2016 paper using direct URL.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 53,\n      \"reason\": \"Orchestrator assigns task to analyze paper 1608.03915 for relevant terms.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 59,\n      \"reason\": \"Orchestrator directs search for papers submitted near August 11, 2016.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 62,\n      \"reason\": \"Orchestrator instructs checking submission history for exact dates.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 68,\n      \"reason\": \"Orchestrator specifies checking entry [50] for submission date.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 71,\n      \"reason\": \"Orchestrator directs analysis of paper 1608.03637 for 'egalitarian' usage.\"\n    },\n    {\n      \"source\": 2,\n      \"target\": 3,\n      \"reason\": \"WebSurfer executes the search based on Orchestrator's instruction.\"\n    },\n    {\n      \"source\": 3,\n      \"target\": 4,\n      \"reason\": \"WebSurfer displays the search results from the issued query.\"\n    },\n    {\n      \"source\": 4,\n      \"target\": 5,\n      \"reason\": \"Search results show the 2022 paper, informing the next navigation step.\"\n    },\n    {\n      \"source\": 5,\n      \"target\": 6,\n      \"reason\": \"Orchestrator instructs to click on the arXiv paper link.\"\n    },\n    {\n      \"source\": 6,\n      \"target\": 7,\n      \"reason\": \"Click action opens a new tab, recorded as a state change.\"\n    },\n    {\n      \"source\": 7,\n      \"target\": 8,\n      \"reason\": \"WebSurfer loads the content of the clicked paper in the new tab.\"\n    },\n    {\n      \"source\": 8,\n      \"target\": 9,\n      \"reason\": \"The paper's content reveals the axis labels, shaping the next step.\"\n    },\n    {\n      \"source\": 9,\n      \"target\": 10,\n      \"reason\": \"The identified labels guide the need to search for the 2016 paper.\"\n    },\n    {\n      \"source\": 10,\n      \"target\": 11,\n      \"reason\": \"WebSurfer navigates to arXiv.org as instructed.\"\n    },\n    {\n      \"source\": 11,\n      \"target\": 12,\n      \"reason\": \"The visit to arXiv.org sets the stage for category navigation.\"\n    },\n    {\n      \"source\": 12,\n      \"target\": 13,\n      \"reason\": \"Orchestrator reiterates the need to find the 2016 paper.\"\n    },\n    {\n      \"source\": 13,\n      \"target\": 14,\n      \"reason\": \"WebSurfer clicks on the Physics category to navigate deeper.\"\n    },\n    {\n      \"source\": 14,\n      \"target\": 15,\n      \"reason\": \"Navigation to Physics archive prepares for subcategory selection.\"\n    },\n    {\n      \"source\": 15,\n      \"target\": 16,\n      \"reason\": \"Orchestrator reiterates the search goal for the 2016 paper.\"\n    },\n    {\n      \"source\": 16,\n      \"target\": 17,\n      \"reason\": \"WebSurfer inputs search terms to locate the 2016 paper.\"\n    },\n    {\n      \"source\": 17,\n      \"target\": 18,\n      \"reason\": \"Search results show papers, but not filtered by date yet.\"\n    },\n    {\n      \"source\": 18,\n      \"target\": 19,\n      \"reason\": \"Orchestrator instructs use of advanced search for precise filtering.\"\n    },\n    {\n      \"source\": 19,\n      \"target\": 20,\n      \"reason\": \"WebSurfer navigates to the arXiv search page.\"\n    },\n    {\n      \"source\": 20,\n      \"target\": 21,\n      \"reason\": \"Orchestrator gives detailed instructions for advanced search.\"\n    },\n    {\n      \"source\": 21,\n      \"target\": 22,\n      \"reason\": \"WebSurfer clicks to access advanced search features.\"\n    },\n    {\n      \"source\": 22,\n      \"target\": 23,\n      \"reason\": \"Clicking opens the advanced search interface.\"\n    },\n    {\n      \"source\": 23,\n      \"target\": 24,\n      \"reason\": \"Orchestrator clarifies the exact search parameters needed.\"\n    },\n    {\n      \"source\": 24,\n      \"target\": 25,\n      \"reason\": \"WebSurfer attempts to expand Physics options for subtopic selection.\"\n    },\n    {\n      \"source\": 25,\n      \"target\": 26,\n      \"reason\": \"Clicking Physics expands the subtopic options.\"\n    },\n    {\n      \"source\": 26,\n      \"target\": 27,\n      \"reason\": \"Orchestrator reiterates the need to select physics.soc-ph and set date.\"\n    },\n    {\n      \"source\": 27,\n      \"target\": 28,\n      \"reason\": \"WebSurfer clicks to select Physics category.\"\n    },\n    {\n      \"source\": 28,\n      \"target\": 29,\n      \"reason\": \"Clicking Physics triggers a page update for subtopic selection.\"\n    },\n    {\n      \"source\": 29,\n      \"target\": 30,\n      \"reason\": \"Orchestrator repeats instruction due to interface navigation issues.\"\n    },\n    {\n      \"source\": 30,\n      \"target\": 31,\n      \"reason\": \"WebSurfer attempts to expand Physics subtopic dropdown.\"\n    },\n    {\n      \"source\": 31,\n      \"target\": 32,\n      \"reason\": \"Interface state shows navigation attempt but no success.\"\n    },\n    {\n      \"source\": 32,\n      \"target\": 33,\n      \"reason\": \"Orchestrator repeats instruction due to lack of progress.\"\n    },\n    {\n      \"source\": 33,\n      \"target\": 34,\n      \"reason\": \"WebSurfer attempts to open subtopic dropdown.\"\n    },\n    {\n      \"source\": 34,\n      \"target\": 35,\n      \"reason\": \"Interface state shows continued navigation attempt.\"\n    },\n    {\n      \"source\": 35,\n      \"target\": 36,\n      \"reason\": \"Orchestrator repeats instruction after failed attempts.\"\n    },\n    {\n      \"source\": 36,\n      \"target\": 37,\n      \"reason\": \"WebSurfer attempts to open subtopic dropdown again.\"\n    },\n    {\n      \"source\": 37,\n      \"target\": 38,\n      \"reason\": \"Interface state shows repeated navigation attempt.\"\n    },\n    {\n      \"source\": 38,\n      \"target\": 39,\n      \"reason\": \"Orchestrator repeats instruction due to persistent failure.\"\n    },\n    {\n      \"source\": 39,\n      \"target\": 40,\n      \"reason\": \"WebSurfer attempts to open subtopic dropdown.\"\n    },\n    {\n      \"source\": 40,\n      \"target\": 41,\n      \"reason\": \"Interface state shows dropdown interaction attempt.\"\n    },\n    {\n      \"source\": 41,\n      \"target\": 42,\n      \"reason\": \"Orchestrator shifts strategy after repeated failures.\"\n    },\n    {\n      \"source\": 42,\n      \"target\": 43,\n      \"reason\": \"WebSurfer attempts to open subtopic dropdown again.\"\n    },\n    {\n      \"source\": 43,\n      \"target\": 44,\n      \"reason\": \"Interface state shows continued interaction attempt.\"\n    },\n    {\n      \"source\": 44,\n      \"target\": 45,\n      \"reason\": \"WebSurfer resets browser due to navigation issues.\"\n    },\n    {\n      \"source\": 45,\n      \"target\": 46,\n      \"reason\": \"Orchestrator restarts the process with updated fact sheet.\"\n    },\n    {\n      \"source\": 46,\n      \"target\": 47,\n      \"reason\": \"Orchestrator devises new plan to use direct URL for paper list.\"\n    },\n    {\n      \"source\": 47,\n      \"target\": 48,\n      \"reason\": \"WebSurfer navigates to the August 2016 paper list.\"\n    },\n    {\n      \"source\": 48,\n      \"target\": 49,\n      \"reason\": \"WebSurfer loads the list of 129 papers in physics.soc-ph for August 2016.\"\n    },\n    {\n      \"source\": 49,\n      \"target\": 50,\n      \"reason\": \"Orchestrator instructs scanning the list for submission dates.\"\n    },\n    {\n      \"source\": 50,\n      \"target\": 51,\n      \"reason\": \"WebSurfer analyzes the page to infer submission date patterns.\"\n    },\n    {\n      \"source\": 51,\n      \"target\": 52,\n      \"reason\": \"WebSurfer reports that IDs suggest chronological order but no exact dates.\"\n    },\n    {\n      \"source\": 52,\n      \"target\": 53,\n      \"reason\": \"Orchestrator assigns next paper to check based on ID proximity.\"\n    },\n    {\n      \"source\": 53,\n      \"target\": 54,\n      \"reason\": \"WebSurfer searches for the specific paper ID not found on current page.\"\n    },\n    {\n      \"source\": 54,\n      \"target\": 55,\n      \"reason\": \"Search results do not directly yield the paper, requiring direct URL.\"\n    },\n    {\n      \"source\": 55,\n      \"target\": 56,\n      \"reason\": \"Orchestror instructs direct navigation to the paper URL.\"\n    },\n    {\n      \"source\": 56,\n      \"target\": 57,\n      \"reason\": \"WebSurfer navigates directly to the paper's abstract page.\"\n    },\n    {\n      \"source\": 57,\n      \"target\": 58,\n      \"reason\": \"WebSurfer loads the paper with submission date August 12, 2016.\"\n    },\n    {\n      \"source\": 58,\n      \"target\": 59,\n      \"reason\": \"Orchestrator adjusts strategy to scan full paper list for correct date.\"\n    },\n    {\n      \"source\": 59,\n      \"target\": 60,\n      \"reason\": \"WebSurfer navigates back to the full paper list.\"\n    },\n    {\n      \"source\": 60,\n      \"target\": 61,\n      \"reason\": \"WebSurfer reloads the paper list for August 2016.\"\n    },\n    {\n      \"source\": 61,\n      \"target\": 62,\n      \"reason\": \"Orchestrator instructs checking submission history for papers near August 11.\"\n    },\n    {\n      \"source\": 62,\n      \"target\": 63,\n      \"reason\": \"WebSurfer scrolls down to view more papers in the list.\"\n    },\n    {\n      \"source\": 63,\n      \"target\": 64,\n      \"reason\": \"Scrolling reveals more entries for manual inspection.\"\n    },\n    {\n      \"source\": 64,\n      \"target\": 65,\n      \"reason\": \"Orchestrator continues instruction to inspect papers for submission date.\"\n    },\n    {\n      \"source\": 65,\n      \"target\": 66,\n      \"reason\": \"WebSurfer scrolls down to continue browsing the list.\"\n    },\n    {\n      \"source\": 66,\n      \"target\": 67,\n      \"reason\": \"Scrolling reveals more papers for potential inspection.\"\n    },\n    {\n      \"source\": 67,\n      \"target\": 68,\n      \"reason\": \"Orchestrator specifies checking entry [50] arXiv:1608.03455.\"\n    },\n    {\n      \"source\": 68,\n      \"target\": 69,\n      \"reason\": \"WebSurfer scrolls to bring entry [50] into view.\"\n    },\n    {\n      \"source\": 69,\n      \"target\": 70,\n      \"reason\": \"Scrolling positions the viewport closer to the target entry.\"\n    },\n    {\n      \"source\": 70,\n      \"target\": 71,\n      \"reason\": \"Orchestrator identifies paper 1608.03637 as submitted on August 11, 2016.\"\n    },\n    {\n      \"source\": 71,\n      \"target\": 72,\n      \"reason\": \"WebSurfer navigates directly to the paper's abstract page.\"\n    },\n    {\n      \"source\": 72,\n      \"target\": 73,\n      \"reason\": \"WebSurfer loads the paper submitted on August 11, 2016.\"\n    },\n    {\n      \"source\": 73,\n      \"target\": 74,\n      \"reason\": \"The paper's content uses 'egalitarian' to describe a society type.\"\n    }\n  ]\n}",
+  "status": "success",
+  "warnings": [
+    "linked_list_degeneracy: 89% of edges are adjacent",
+    "under_counted_parents: only 12% of targets have 2+ parents"
+  ]
+}

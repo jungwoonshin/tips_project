@@ -1,0 +1,102 @@
+{
+  "framework": "owl",
+  "model": "gpt-oss:120b",
+  "split": "validation",
+  "total_tasks": 10,
+  "correct": 5,
+  "accuracy": 0.5,
+  "by_level": {
+    "level_1": {
+      "total": 3,
+      "correct": 1,
+      "accuracy": 0.3333333333333333
+    },
+    "level_2": {
+      "total": 7,
+      "correct": 4,
+      "accuracy": 0.5714285714285714
+    }
+  },
+  "per_task": [
+    {
+      "task_id": "8e867cd7-cff9-4e6c-867a-ff5ddc2550be",
+      "level": 1,
+      "is_correct": false,
+      "duration_seconds": 61.736597,
+      "total_tokens": 85621,
+      "error": null
+    },
+    {
+      "task_id": "ec09fa32-d03f-4bf8-84b0-1f16922c3ae4",
+      "level": 1,
+      "is_correct": true,
+      "duration_seconds": 17.175178,
+      "total_tokens": 3770,
+      "error": null
+    },
+    {
+      "task_id": "32102e3e-d12a-4209-9163-7b3a104efe5d",
+      "level": 2,
+      "is_correct": true,
+      "duration_seconds": 19.98391,
+      "total_tokens": 14398,
+      "error": null
+    },
+    {
+      "task_id": "e1fc63a2-da7a-432f-be78-7c4a95598703",
+      "level": 1,
+      "is_correct": false,
+      "duration_seconds": 44.721925,
+      "total_tokens": 43011,
+      "error": null
+    },
+    {
+      "task_id": "04a04a9b-226c-43fd-b319-d5e89743676f",
+      "level": 2,
+      "is_correct": false,
+      "duration_seconds": 20.391863,
+      "total_tokens": 16267,
+      "error": null
+    },
+    {
+      "task_id": "14569e28-c88c-43e4-8c32-097d35b9a67d",
+      "level": 2,
+      "is_correct": false,
+      "duration_seconds": 2.792936,
+      "total_tokens": 995,
+      "error": null
+    },
+    {
+      "task_id": "c61d22de-5f6c-4958-a7f6-5e9707bd3466",
+      "level": 2,
+      "is_correct": true,
+      "duration_seconds": 67.894192,
+      "total_tokens": 114622,
+      "error": null
+    },
+    {
+      "task_id": "17b5a6a3-bc87-42e8-b0fb-6ab0781ef2cc",
+      "level": 2,
+      "is_correct": true,
+      "duration_seconds": 53.678726,
+      "total_tokens": 91822,
+      "error": null
+    },
+    {
+      "task_id": "3627a8be-a77f-41bb-b807-7e1bd4c0ebdf",
+      "level": 2,
+      "is_correct": true,
+      "duration_seconds": 74.824432,
+      "total_tokens": 38098,
+      "error": null
+    },
+    {
+      "task_id": "7619a514-5fa8-43ef-9143-83b66a43d7a4",
+      "level": 2,
+      "is_correct": false,
+      "duration_seconds": 471.315089,
+      "total_tokens": 1453227,
+      "error": null
+    }
+  ]
+}

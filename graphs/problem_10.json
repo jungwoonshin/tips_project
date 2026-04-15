@@ -1,0 +1,43 @@
+{
+  "problem_id": "problem_10",
+  "num_steps": 3,
+  "model_used": "vllm on QuantTrio/Qwen3-235B-A22B-Instruct-2507-AWQ",
+  "edges": [
+    {
+      "source": 0,
+      "target": 1,
+      "reason": "Step 1 begins processing the user query from step 0."
+    },
+    {
+      "source": 0,
+      "target": 2,
+      "reason": "Step 2 answers the original user question about ball selection."
+    },
+    {
+      "source": 1,
+      "target": 2,
+      "reason": "Step 2 executes the Orchestrator's plan articulated in step 1."
+    }
+  ],
+  "stats": {
+    "num_edges": 3,
+    "num_adjacent_edges": 2,
+    "num_skip_edges": 1,
+    "adjacent_ratio": 0.6667,
+    "density": 1.0,
+    "max_skip_distance": 2,
+    "avg_skip_distance": 2.0,
+    "avg_parents_per_child": 1.5,
+    "multi_parent_fraction": 0.5,
+    "max_in_degree": 2,
+    "max_out_degree": 2,
+    "is_linked_list": false,
+    "is_under_counted": false
+  },
+  "input_tokens": 3055,
+  "output_tokens": 120,
+  "latency_seconds": 1.62,
+  "raw_response": "{\n  \"edges\": [\n    {\n      \"source\": 0,\n      \"target\": 1,\n      \"reason\": \"Step 1 begins processing the user query from step 0.\"\n    },\n    {\n      \"source\": 0,\n      \"target\": 2,\n      \"reason\": \"Step 2 answers the original user question about ball selection.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 2,\n      \"reason\": \"Step 2 executes the Orchestrator's plan articulated in step 1.\"\n    }\n  ]\n}",
+  "status": "success",
+  "warnings": []
+}

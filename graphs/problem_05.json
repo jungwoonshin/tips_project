@@ -1,0 +1,408 @@
+{
+  "problem_id": "problem_05",
+  "num_steps": 58,
+  "model_used": "vllm on QuantTrio/Qwen3-235B-A22B-Instruct-2507-AWQ",
+  "edges": [
+    {
+      "source": 1,
+      "target": 2,
+      "reason": "Orchestrator step 1 provides the initial plan to identify the mollusk species."
+    },
+    {
+      "source": 1,
+      "target": 3,
+      "reason": "Step 3 executes the plan to search for the British Museum object."
+    },
+    {
+      "source": 2,
+      "target": 3,
+      "reason": "Step 2 explicitly instructs searching the British Museum collection, shaping step 3's action."
+    },
+    {
+      "source": 3,
+      "target": 4,
+      "reason": "Step 4 displays the result of the web search initiated in step 3."
+    },
+    {
+      "source": 1,
+      "target": 5,
+      "reason": "Step 5 re-articulates the plan to retrieve the mollusk species name, continuing from step 1."
+    },
+    {
+      "source": 5,
+      "target": 6,
+      "reason": "Step 6 executes the instruction to click a link for the British Museum collection."
+    },
+    {
+      "source": 6,
+      "target": 7,
+      "reason": "Step 7 is the direct result of clicking the link in step 6."
+    },
+    {
+      "source": 7,
+      "target": 8,
+      "reason": "Step 8 displays the browser output after navigating to the British Museum site."
+    },
+    {
+      "source": 1,
+      "target": 9,
+      "reason": "Step 9 re-articulates the plan after encountering a security block, adapting the strategy."
+    },
+    {
+      "source": 8,
+      "target": 9,
+      "reason": "Step 9 reacts to the security verification error shown in step 8."
+    },
+    {
+      "source": 9,
+      "target": 10,
+      "reason": "Step 10 executes the new search strategy proposed in step 9."
+    },
+    {
+      "source": 10,
+      "target": 11,
+      "reason": "Step 11 displays the result of the web search from step 10."
+    },
+    {
+      "source": 1,
+      "target": 12,
+      "reason": "Step 12 continues the overarching plan to identify the species via academic sources."
+    },
+    {
+      "source": 11,
+      "target": 12,
+      "reason": "Step 12 reacts to the lack of useful results in step 11."
+    },
+    {
+      "source": 12,
+      "target": 13,
+      "reason": "Step 13 executes the plan to search for academic sources as instructed in step 12."
+    },
+    {
+      "source": 13,
+      "target": 14,
+      "reason": "Step 14 displays the result of the academic-focused web search from step 13."
+    },
+    {
+      "source": 14,
+      "target": 15,
+      "reason": "Step 15 resets the browser due to unproductive search results in step 14."
+    },
+    {
+      "source": 1,
+      "target": 16,
+      "reason": "Step 16 re-articulates the plan after multiple failed attempts to find the species."
+    },
+    {
+      "source": 15,
+      "target": 16,
+      "reason": "Step 16 follows the browser reset in step 15 to restart the search process."
+    },
+    {
+      "source": 16,
+      "target": 17,
+      "reason": "Step 17 proposes a new search strategy using Google Scholar, based on step 16's plan."
+    },
+    {
+      "source": 17,
+      "target": 18,
+      "reason": "Step 18 executes the Google Scholar search strategy proposed in step 17."
+    },
+    {
+      "source": 18,
+      "target": 19,
+      "reason": "Step 19 displays the result of the Google Scholar search from step 18."
+    },
+    {
+      "source": 1,
+      "target": 20,
+      "reason": "Step 20 continues the plan to locate the mollusk species via academic sources."
+    },
+    {
+      "source": 19,
+      "target": 20,
+      "reason": "Step 20 reacts to the unhelpful results in step 19 by refining the search approach."
+    },
+    {
+      "source": 20,
+      "target": 21,
+      "reason": "Step 21 executes the instruction to visit Google Scholar directly."
+    },
+    {
+      "source": 21,
+      "target": 22,
+      "reason": "Step 22 displays the Google Scholar homepage after visiting the URL."
+    },
+    {
+      "source": 1,
+      "target": 23,
+      "reason": "Step 23 continues the plan to search Google Scholar for the species identification."
+    },
+    {
+      "source": 22,
+      "target": 23,
+      "reason": "Step 23 builds on the successful access to Google Scholar in step 22."
+    },
+    {
+      "source": 23,
+      "target": 24,
+      "reason": "Step 24 executes the search query as instructed in step 23."
+    },
+    {
+      "source": 24,
+      "target": 25,
+      "reason": "Step 25 displays the search results from the query entered in step 24."
+    },
+    {
+      "source": 1,
+      "target": 26,
+      "reason": "Step 26 continues the plan to retrieve the species and article details from the search result."
+    },
+    {
+      "source": 25,
+      "target": 26,
+      "reason": "Step 26 reacts to the discovery of a relevant paper in step 25."
+    },
+    {
+      "source": 26,
+      "target": 27,
+      "reason": "Step 27 executes the instruction to click on the Google Scholar result."
+    },
+    {
+      "source": 27,
+      "target": 28,
+      "reason": "Step 28 displays the result of clicking the paper link in step 27."
+    },
+    {
+      "source": 1,
+      "target": 29,
+      "reason": "Step 29 continues the plan to extract citation details from the paper."
+    },
+    {
+      "source": 28,
+      "target": 29,
+      "reason": "Step 29 builds on the paper preview shown in step 28."
+    },
+    {
+      "source": 29,
+      "target": 30,
+      "reason": "Step 30 attempts to open the PDF of the paper as instructed in step 29."
+    },
+    {
+      "source": 30,
+      "target": 31,
+      "reason": "Step 31 displays the result after attempting to open the PDF in step 30."
+    },
+    {
+      "source": 1,
+      "target": 32,
+      "reason": "Step 32 shifts strategy to search Science Advances directly for the article."
+    },
+    {
+      "source": 31,
+      "target": 32,
+      "reason": "Step 32 reacts to the inability to access the full paper in step 31."
+    },
+    {
+      "source": 32,
+      "target": 33,
+      "reason": "Step 33 executes the visit to the Science Advances website as instructed in step 32."
+    },
+    {
+      "source": 33,
+      "target": 34,
+      "reason": "Step 34 displays the result of visiting the Science Advances site in step 33."
+    },
+    {
+      "source": 1,
+      "target": 35,
+      "reason": "Step 35 adapts the plan to use Google to find the article after access issues."
+    },
+    {
+      "source": 34,
+      "target": 35,
+      "reason": "Step 35 reacts to the security block encountered in step 34."
+    },
+    {
+      "source": 35,
+      "target": 36,
+      "reason": "Step 36 executes the new search query proposed in step 35."
+    },
+    {
+      "source": 36,
+      "target": 37,
+      "reason": "Step 37 displays the result of the web search from step 36."
+    },
+    {
+      "source": 1,
+      "target": 38,
+      "reason": "Step 38 refines the search strategy to locate press releases about the article."
+    },
+    {
+      "source": 37,
+      "target": 38,
+      "reason": "Step 38 reacts to the lack of useful results in step 37."
+    },
+    {
+      "source": 38,
+      "target": 39,
+      "reason": "Step 39 executes the refined search query focusing on .edu and .ac.uk sites."
+    },
+    {
+      "source": 39,
+      "target": 40,
+      "reason": "Step 40 displays the result of the academic-focused search from step 39."
+    },
+    {
+      "source": 1,
+      "target": 41,
+      "reason": "Step 41 continues the plan to find press releases from reputable institutions."
+    },
+    {
+      "source": 40,
+      "target": 41,
+      "reason": "Step 41 reacts to the unproductive search results in step 40."
+    },
+    {
+      "source": 41,
+      "target": 42,
+      "reason": "Step 42 executes the search for press releases from specific institutions."
+    },
+    {
+      "source": 42,
+      "target": 43,
+      "reason": "Step 43 displays the result of the press release search from step 42."
+    },
+    {
+      "source": 1,
+      "target": 44,
+      "reason": "Step 44 further refines the search strategy to locate a confirmed age."
+    },
+    {
+      "source": 43,
+      "target": 44,
+      "reason": "Step 44 reacts to the lack of results in step 43 by refining the query."
+    },
+    {
+      "source": 44,
+      "target": 45,
+      "reason": "Step 45 executes the more specific search query proposed in step 44."
+    },
+    {
+      "source": 45,
+      "target": 46,
+      "reason": "Step 46 displays the result of the detailed search from step 45."
+    },
+    {
+      "source": 1,
+      "target": 47,
+      "reason": "Step 47 proposes another refined search strategy to find the article summary."
+    },
+    {
+      "source": 46,
+      "target": 47,
+      "reason": "Step 47 reacts to the lack of access in step 46 by changing search focus."
+    },
+    {
+      "source": 47,
+      "target": 48,
+      "reason": "Step 48 executes the new search query focusing on news and press sites."
+    },
+    {
+      "source": 48,
+      "target": 49,
+      "reason": "Step 49 displays the result of the press-focused search from step 48."
+    },
+    {
+      "source": 1,
+      "target": 50,
+      "reason": "Step 50 targets the University of Bergen website to find a press release."
+    },
+    {
+      "source": 49,
+      "target": 50,
+      "reason": "Step 50 reacts to the lack of results in step 49 by targeting a specific university."
+    },
+    {
+      "source": 50,
+      "target": 51,
+      "reason": "Step 51 executes the search on the University of Bergen site as instructed."
+    },
+    {
+      "source": 51,
+      "target": 52,
+      "reason": "Step 52 displays the result of the site-specific search from step 51."
+    },
+    {
+      "source": 52,
+      "target": 53,
+      "reason": "Step 53 resets the browser after unproductive search attempts."
+    },
+    {
+      "source": 53,
+      "target": 54,
+      "reason": "Step 54 re-articulates the plan after multiple failed access attempts."
+    },
+    {
+      "source": 1,
+      "target": 54,
+      "reason": "Step 54 continues the overarching goal to identify the species and article details."
+    },
+    {
+      "source": 54,
+      "target": 55,
+      "reason": "Step 55 resets the browser to prepare for a new search attempt."
+    },
+    {
+      "source": 55,
+      "target": 56,
+      "reason": "Step 56 continues the updated fact sheet after browser reset."
+    },
+    {
+      "source": 1,
+      "target": 56,
+      "reason": "Step 56 builds on the initial facts and search context from step 1."
+    },
+    {
+      "source": 25,
+      "target": 56,
+      "reason": "Step 56 incorporates the species name inferred from the Google Scholar result in step 25."
+    },
+    {
+      "source": 38,
+      "target": 56,
+      "reason": "Step 56 uses the search strategy from step 38 that led to the 130,000-year figure."
+    },
+    {
+      "source": 42,
+      "target": 56,
+      "reason": "Step 56 draws on the press release search in step 42 that supported the age claim."
+    },
+    {
+      "source": 56,
+      "target": 57,
+      "reason": "Step 57 finalizes the answer based on the updated fact sheet in step 56."
+    }
+  ],
+  "stats": {
+    "num_edges": 76,
+    "num_adjacent_edges": 55,
+    "num_skip_edges": 21,
+    "adjacent_ratio": 0.7237,
+    "density": 0.046,
+    "max_skip_distance": 55,
+    "avg_skip_distance": 27.86,
+    "avg_parents_per_child": 1.36,
+    "multi_parent_fraction": 0.3036,
+    "max_in_degree": 5,
+    "max_out_degree": 19,
+    "is_linked_list": false,
+    "is_under_counted": false
+  },
+  "input_tokens": 14271,
+  "output_tokens": 3202,
+  "latency_seconds": 38.74,
+  "raw_response": "{\n  \"edges\": [\n    {\n      \"source\": 1,\n      \"target\": 2,\n      \"reason\": \"Orchestrator step 1 provides the initial plan to identify the mollusk species.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 3,\n      \"reason\": \"Step 3 executes the plan to search for the British Museum object.\"\n    },\n    {\n      \"source\": 2,\n      \"target\": 3,\n      \"reason\": \"Step 2 explicitly instructs searching the British Museum collection, shaping step 3's action.\"\n    },\n    {\n      \"source\": 3,\n      \"target\": 4,\n      \"reason\": \"Step 4 displays the result of the web search initiated in step 3.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 5,\n      \"reason\": \"Step 5 re-articulates the plan to retrieve the mollusk species name, continuing from step 1.\"\n    },\n    {\n      \"source\": 5,\n      \"target\": 6,\n      \"reason\": \"Step 6 executes the instruction to click a link for the British Museum collection.\"\n    },\n    {\n      \"source\": 6,\n      \"target\": 7,\n      \"reason\": \"Step 7 is the direct result of clicking the link in step 6.\"\n    },\n    {\n      \"source\": 7,\n      \"target\": 8,\n      \"reason\": \"Step 8 displays the browser output after navigating to the British Museum site.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 9,\n      \"reason\": \"Step 9 re-articulates the plan after encountering a security block, adapting the strategy.\"\n    },\n    {\n      \"source\": 8,\n      \"target\": 9,\n      \"reason\": \"Step 9 reacts to the security verification error shown in step 8.\"\n    },\n    {\n      \"source\": 9,\n      \"target\": 10,\n      \"reason\": \"Step 10 executes the new search strategy proposed in step 9.\"\n    },\n    {\n      \"source\": 10,\n      \"target\": 11,\n      \"reason\": \"Step 11 displays the result of the web search from step 10.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 12,\n      \"reason\": \"Step 12 continues the overarching plan to identify the species via academic sources.\"\n    },\n    {\n      \"source\": 11,\n      \"target\": 12,\n      \"reason\": \"Step 12 reacts to the lack of useful results in step 11.\"\n    },\n    {\n      \"source\": 12,\n      \"target\": 13,\n      \"reason\": \"Step 13 executes the plan to search for academic sources as instructed in step 12.\"\n    },\n    {\n      \"source\": 13,\n      \"target\": 14,\n      \"reason\": \"Step 14 displays the result of the academic-focused web search from step 13.\"\n    },\n    {\n      \"source\": 14,\n      \"target\": 15,\n      \"reason\": \"Step 15 resets the browser due to unproductive search results in step 14.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 16,\n      \"reason\": \"Step 16 re-articulates the plan after multiple failed attempts to find the species.\"\n    },\n    {\n      \"source\": 15,\n      \"target\": 16,\n      \"reason\": \"Step 16 follows the browser reset in step 15 to restart the search process.\"\n    },\n    {\n      \"source\": 16,\n      \"target\": 17,\n      \"reason\": \"Step 17 proposes a new search strategy using Google Scholar, based on step 16's plan.\"\n    },\n    {\n      \"source\": 17,\n      \"target\": 18,\n      \"reason\": \"Step 18 executes the Google Scholar search strategy proposed in step 17.\"\n    },\n    {\n      \"source\": 18,\n      \"target\": 19,\n      \"reason\": \"Step 19 displays the result of the Google Scholar search from step 18.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 20,\n      \"reason\": \"Step 20 continues the plan to locate the mollusk species via academic sources.\"\n    },\n    {\n      \"source\": 19,\n      \"target\": 20,\n      \"reason\": \"Step 20 reacts to the unhelpful results in step 19 by refining the search approach.\"\n    },\n    {\n      \"source\": 20,\n      \"target\": 21,\n      \"reason\": \"Step 21 executes the instruction to visit Google Scholar directly.\"\n    },\n    {\n      \"source\": 21,\n      \"target\": 22,\n      \"reason\": \"Step 22 displays the Google Scholar homepage after visiting the URL.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 23,\n      \"reason\": \"Step 23 continues the plan to search Google Scholar for the species identification.\"\n    },\n    {\n      \"source\": 22,\n      \"target\": 23,\n      \"reason\": \"Step 23 builds on the successful access to Google Scholar in step 22.\"\n    },\n    {\n      \"source\": 23,\n      \"target\": 24,\n      \"reason\": \"Step 24 executes the search query as instructed in step 23.\"\n    },\n    {\n      \"source\": 24,\n      \"target\": 25,\n      \"reason\": \"Step 25 displays the search results from the query entered in step 24.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 26,\n      \"reason\": \"Step 26 continues the plan to retrieve the species and article details from the search result.\"\n    },\n    {\n      \"source\": 25,\n      \"target\": 26,\n      \"reason\": \"Step 26 reacts to the discovery of a relevant paper in step 25.\"\n    },\n    {\n      \"source\": 26,\n      \"target\": 27,\n      \"reason\": \"Step 27 executes the instruction to click on the Google Scholar result.\"\n    },\n    {\n      \"source\": 27,\n      \"target\": 28,\n      \"reason\": \"Step 28 displays the result of clicking the paper link in step 27.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 29,\n      \"reason\": \"Step 29 continues the plan to extract citation details from the paper.\"\n    },\n    {\n      \"source\": 28,\n      \"target\": 29,\n      \"reason\": \"Step 29 builds on the paper preview shown in step 28.\"\n    },\n    {\n      \"source\": 29,\n      \"target\": 30,\n      \"reason\": \"Step 30 attempts to open the PDF of the paper as instructed in step 29.\"\n    },\n    {\n      \"source\": 30,\n      \"target\": 31,\n      \"reason\": \"Step 31 displays the result after attempting to open the PDF in step 30.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 32,\n      \"reason\": \"Step 32 shifts strategy to search Science Advances directly for the article.\"\n    },\n    {\n      \"source\": 31,\n      \"target\": 32,\n      \"reason\": \"Step 32 reacts to the inability to access the full paper in step 31.\"\n    },\n    {\n      \"source\": 32,\n      \"target\": 33,\n      \"reason\": \"Step 33 executes the visit to the Science Advances website as instructed in step 32.\"\n    },\n    {\n      \"source\": 33,\n      \"target\": 34,\n      \"reason\": \"Step 34 displays the result of visiting the Science Advances site in step 33.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 35,\n      \"reason\": \"Step 35 adapts the plan to use Google to find the article after access issues.\"\n    },\n    {\n      \"source\": 34,\n      \"target\": 35,\n      \"reason\": \"Step 35 reacts to the security block encountered in step 34.\"\n    },\n    {\n      \"source\": 35,\n      \"target\": 36,\n      \"reason\": \"Step 36 executes the new search query proposed in step 35.\"\n    },\n    {\n      \"source\": 36,\n      \"target\": 37,\n      \"reason\": \"Step 37 displays the result of the web search from step 36.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 38,\n      \"reason\": \"Step 38 refines the search strategy to locate press releases about the article.\"\n    },\n    {\n      \"source\": 37,\n      \"target\": 38,\n      \"reason\": \"Step 38 reacts to the lack of useful results in step 37.\"\n    },\n    {\n      \"source\": 38,\n      \"target\": 39,\n      \"reason\": \"Step 39 executes the refined search query focusing on .edu and .ac.uk sites.\"\n    },\n    {\n      \"source\": 39,\n      \"target\": 40,\n      \"reason\": \"Step 40 displays the result of the academic-focused search from step 39.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 41,\n      \"reason\": \"Step 41 continues the plan to find press releases from reputable institutions.\"\n    },\n    {\n      \"source\": 40,\n      \"target\": 41,\n      \"reason\": \"Step 41 reacts to the unproductive search results in step 40.\"\n    },\n    {\n      \"source\": 41,\n      \"target\": 42,\n      \"reason\": \"Step 42 executes the search for press releases from specific institutions.\"\n    },\n    {\n      \"source\": 42,\n      \"target\": 43,\n      \"reason\": \"Step 43 displays the result of the press release search from step 42.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 44,\n      \"reason\": \"Step 44 further refines the search strategy to locate a confirmed age.\"\n    },\n    {\n      \"source\": 43,\n      \"target\": 44,\n      \"reason\": \"Step 44 reacts to the lack of results in step 43 by refining the query.\"\n    },\n    {\n      \"source\": 44,\n      \"target\": 45,\n      \"reason\": \"Step 45 executes the more specific search query proposed in step 44.\"\n    },\n    {\n      \"source\": 45,\n      \"target\": 46,\n      \"reason\": \"Step 46 displays the result of the detailed search from step 45.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 47,\n      \"reason\": \"Step 47 proposes another refined search strategy to find the article summary.\"\n    },\n    {\n      \"source\": 46,\n      \"target\": 47,\n      \"reason\": \"Step 47 reacts to the lack of access in step 46 by changing search focus.\"\n    },\n    {\n      \"source\": 47,\n      \"target\": 48,\n      \"reason\": \"Step 48 executes the new search query focusing on news and press sites.\"\n    },\n    {\n      \"source\": 48,\n      \"target\": 49,\n      \"reason\": \"Step 49 displays the result of the press-focused search from step 48.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 50,\n      \"reason\": \"Step 50 targets the University of Bergen website to find a press release.\"\n    },\n    {\n      \"source\": 49,\n      \"target\": 50,\n      \"reason\": \"Step 50 reacts to the lack of results in step 49 by targeting a specific university.\"\n    },\n    {\n      \"source\": 50,\n      \"target\": 51,\n      \"reason\": \"Step 51 executes the search on the University of Bergen site as instructed.\"\n    },\n    {\n      \"source\": 51,\n      \"target\": 52,\n      \"reason\": \"Step 52 displays the result of the site-specific search from step 51.\"\n    },\n    {\n      \"source\": 52,\n      \"target\": 53,\n      \"reason\": \"Step 53 resets the browser after unproductive search attempts.\"\n    },\n    {\n      \"source\": 53,\n      \"target\": 54,\n      \"reason\": \"Step 54 re-articulates the plan after multiple failed access attempts.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 54,\n      \"reason\": \"Step 54 continues the overarching goal to identify the species and article details.\"\n    },\n    {\n      \"source\": 54,\n      \"target\": 55,\n      \"reason\": \"Step 55 resets the browser to prepare for a new search attempt.\"\n    },\n    {\n      \"source\": 55,\n      \"target\": 56,\n      \"reason\": \"Step 56 continues the updated fact sheet after browser reset.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 56,\n      \"reason\": \"Step 56 builds on the initial facts and search context from step 1.\"\n    },\n    {\n      \"source\": 25,\n      \"target\": 56,\n      \"reason\": \"Step 56 incorporates the species name inferred from the Google Scholar result in step 25.\"\n    },\n    {\n      \"source\": 38,\n      \"target\": 56,\n      \"reason\": \"Step 56 uses the search strategy from step 38 that led to the 130,000-year figure.\"\n    },\n    {\n      \"source\": 42,\n      \"target\": 56,\n      \"reason\": \"Step 56 draws on the press release search in step 42 that supported the age claim.\"\n    },\n    {\n      \"source\": 56,\n      \"target\": 57,\n      \"reason\": \"Step 57 finalizes the answer based on the updated fact sheet in step 56.\"\n    }\n  ]\n}",
+  "status": "success",
+  "warnings": []
+}

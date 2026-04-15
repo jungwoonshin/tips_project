@@ -1,0 +1,58 @@
+{
+  "problem_id": "problem_04",
+  "num_steps": 5,
+  "model_used": "vllm on QuantTrio/Qwen3-235B-A22B-Instruct-2507-AWQ",
+  "edges": [
+    {
+      "source": 1,
+      "target": 2,
+      "reason": "Orchestrator step 1 established the overall plan to analyze the spreadsheet for the oldest Blu-Ray."
+    },
+    {
+      "source": 1,
+      "target": 3,
+      "reason": "FileSurfer's action is shaped by the initial plan from Orchestrator step 1 to inspect the file."
+    },
+    {
+      "source": 2,
+      "target": 3,
+      "reason": "FileSurfer executes the specific instruction from Orchestrator step 2 to open and inspect the Excel file."
+    },
+    {
+      "source": 3,
+      "target": 4,
+      "reason": "The Orchestrator's conclusion in step 4 is based on the data extracted by FileSurfer in step 3."
+    },
+    {
+      "source": 1,
+      "target": 4,
+      "reason": "Orchestrator step 4 continues the original plan from step 1 to find the oldest Blu-Ray title."
+    },
+    {
+      "source": 2,
+      "target": 4,
+      "reason": "The final answer in step 4 depends on the task decomposition initiated in step 2."
+    }
+  ],
+  "stats": {
+    "num_edges": 6,
+    "num_adjacent_edges": 3,
+    "num_skip_edges": 3,
+    "adjacent_ratio": 0.5,
+    "density": 0.6,
+    "max_skip_distance": 3,
+    "avg_skip_distance": 2.33,
+    "avg_parents_per_child": 2.0,
+    "multi_parent_fraction": 0.6667,
+    "max_in_degree": 3,
+    "max_out_degree": 3,
+    "is_linked_list": false,
+    "is_under_counted": false
+  },
+  "input_tokens": 3072,
+  "output_tokens": 280,
+  "latency_seconds": 3.35,
+  "raw_response": "{\n  \"edges\": [\n    {\n      \"source\": 1,\n      \"target\": 2,\n      \"reason\": \"Orchestrator step 1 established the overall plan to analyze the spreadsheet for the oldest Blu-Ray.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 3,\n      \"reason\": \"FileSurfer's action is shaped by the initial plan from Orchestrator step 1 to inspect the file.\"\n    },\n    {\n      \"source\": 2,\n      \"target\": 3,\n      \"reason\": \"FileSurfer executes the specific instruction from Orchestrator step 2 to open and inspect the Excel file.\"\n    },\n    {\n      \"source\": 3,\n      \"target\": 4,\n      \"reason\": \"The Orchestrator's conclusion in step 4 is based on the data extracted by FileSurfer in step 3.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 4,\n      \"reason\": \"Orchestrator step 4 continues the original plan from step 1 to find the oldest Blu-Ray title.\"\n    },\n    {\n      \"source\": 2,\n      \"target\": 4,\n      \"reason\": \"The final answer in step 4 depends on the task decomposition initiated in step 2.\"\n    }\n  ]\n}",
+  "status": "success",
+  "warnings": []
+}

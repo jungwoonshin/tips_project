@@ -1,0 +1,232 @@
+{
+  "results": [
+    {
+      "graph_problem_id": "problem_01",
+      "instance_id": "gaia_validation_0002",
+      "filename": "04a04a9b-226c-43fd-b319-d5e89743676f.json",
+      "all_error_steps": [
+        43,
+        44,
+        38,
+        15,
+        24,
+        27,
+        33,
+        42,
+        5,
+        40,
+        41
+      ],
+      "critical_nodes": [
+        {
+          "step": 5,
+          "agent": "MagenticOneOrchestrator",
+          "error_type": "PLANNING",
+          "what_went_wrong": "The orchestrator assigns a complex manual counting task across 12 issues without verifying if a summary source or annual report exists, leading to inefficient and error-prone execution."
+        }
+      ],
+      "critical_steps": [
+        5
+      ],
+      "last_critical_step": 5,
+      "status": "success"
+    },
+    {
+      "graph_problem_id": "problem_02",
+      "instance_id": "gaia_validation_0003",
+      "filename": "14569e28-c88c-43e4-8c32-097d35b9a67d.json",
+      "all_error_steps": [
+        16,
+        18,
+        19
+      ],
+      "critical_nodes": [
+        {
+          "step": 16,
+          "agent": "Coder",
+          "error_type": "REASONING",
+          "what_went_wrong": "The agent incorrectly assumes that 'r' must be replaced with '.F' and that adding a dot is sufficient, but in Unlambda, 'r' is a valid shorthand for '.\\n' and cannot be 'fixed' by adding a dot before it. The actual issue is that the code already has the correct structure for outputting characters, but starts with 'r' which outputs a newline—this is a semantic error, not a syntactic one requiring addition of a dot."
+        }
+      ],
+      "critical_steps": [
+        16
+      ],
+      "last_critical_step": 16,
+      "status": "success"
+    },
+    {
+      "graph_problem_id": "problem_03",
+      "instance_id": "gaia_validation_0001",
+      "filename": "17b5a6a3-bc87-42e8-b0fb-6ab0781ef2cc.json",
+      "all_error_steps": [
+        2,
+        5,
+        8,
+        11,
+        14,
+        17,
+        22,
+        40
+      ],
+      "critical_nodes": [
+        {
+          "step": 2,
+          "agent": "MagenticOneOrchestrator",
+          "error_type": "SEARCH",
+          "what_went_wrong": "The orchestrator instructed the WebSurfer to search for 'Amphiprion ocellaris' directly on the homepage, but the USGS NAS database does not support direct searches via the homepage search bar. The correct method is to navigate to the Advanced Text Query page first, which was not specified."
+        },
+        {
+          "step": 5,
+          "agent": "MagenticOneOrchestrator",
+          "error_type": "SEARCH",
+          "what_went_wrong": "The instruction to 'use the search bar on the USGS NAS website' is ambiguous and incorrect. The homepage search bar does not lead to a proper database query; instead, the agent must navigate through the 'Database & Queries' > 'Text Queries' > 'Advanced' path to access the correct search interface."
+        },
+        {
+          "step": 8,
+          "agent": "MagenticOneOrchestrator",
+          "error_type": "SEARCH",
+          "what_went_wrong": "The orchestrator repeated the same flawed instruction to submit a search via the homepage search bar, which is not functional for scientific name queries. This indicates a failure to understand the website's navigation structure."
+        },
+        {
+          "step": 11,
+          "agent": "MagenticOneOrchestrator",
+          "error_type": "SEARCH",
+          "what_went_wrong": "Again, the orchestrator incorrectly assumes that typing into the homepage search bar will retrieve database records, failing to direct the agent to the proper Advanced Query interface."
+        },
+        {
+          "step": 14,
+          "agent": "MagenticOneOrchestrator",
+          "error_type": "SEARCH",
+          "what_went_wrong": "The orchestrator continues to misuse the homepage search bar instead of navigating to the correct query page, showing a persistent misunderstanding of how to interact with the USGS NAS database."
+        },
+        {
+          "step": 17,
+          "agent": "MagenticOneOrchestrator",
+          "error_type": "SEARCH",
+          "what_went_wrong": "Despite multiple failed attempts, the orchestrator still instructs a search via the non-functional homepage search bar, indicating a failure to adapt or correct the search strategy."
+        },
+        {
+          "step": 40,
+          "agent": "MagenticOneOrchestrator",
+          "error_type": "PREMATURE_TERMINATION",
+          "what_went_wrong": "The agent concluded 'No records found' based solely on the absence of results in the USGS NAS database, but failed to consider that the clownfish (Amphiprion ocellaris) is a marine species and may not be covered in freshwater-focused databases. Additionally, the answer should have investigated whether related species or common names (e.g., 'clownfish') yielded results, or acknowledged data limitations rather than definitively closing the task."
+        }
+      ],
+      "critical_steps": [
+        2,
+        5,
+        8,
+        11,
+        14,
+        17,
+        40
+      ],
+      "last_critical_step": 40,
+      "status": "success"
+    },
+    {
+      "graph_problem_id": "problem_04",
+      "instance_id": "gaia_validation_0005",
+      "filename": "32102e3e-d12a-4209-9163-7b3a104efe5d.json",
+      "all_error_steps": [
+        3,
+        4
+      ],
+      "critical_nodes": [
+        {
+          "step": 3,
+          "agent": "FileSurfer",
+          "error_type": "INFORMATION",
+          "what_went_wrong": "FileSurfer misidentified the format rows; 'Blu-Ray' is a header row, not a data entry. The actual Blu-Ray titles are listed below it, but the agent failed to correctly parse or distinguish the format section, leading to incorrect data interpretation."
+        }
+      ],
+      "critical_steps": [
+        3
+      ],
+      "last_critical_step": 3,
+      "status": "success"
+    },
+    {
+      "graph_problem_id": "problem_05",
+      "instance_id": "gaia_validation_0007",
+      "filename": "3627a8be-a77f-41bb-b807-7e1bd4c0ebdf.json",
+      "all_error_steps": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        32,
+        35,
+        38,
+        44,
+        50
+      ],
+      "critical_nodes": [
+        {
+          "step": 25,
+          "agent": "WebSurfer",
+          "error_type": "INFORMATION",
+          "what_went_wrong": "The search result on Google Scholar was misinterpreted; the paper from aclanthology.org is a 2026 paper that only quotes the original question verbatim and does not provide the actual species or article. The agent failed to recognize this and treated it as a valid source."
+        }
+      ],
+      "critical_steps": [
+        25
+      ],
+      "last_critical_step": 25,
+      "status": "success"
+    },
+    {
+      "graph_problem_id": "problem_09",
+      "instance_id": "gaia_validation_0004",
+      "filename": "e1fc63a2-da7a-432f-be78-7c4a95598703.json",
+      "all_error_steps": [
+        9,
+        10,
+        11
+      ],
+      "critical_nodes": [
+        {
+          "step": 9,
+          "agent": "MagenticOneOrchestrator",
+          "error_type": "INFORMATION",
+          "what_went_wrong": "The orchestrator incorrectly assumed the minimum perigee distance is 362,600 km without verifying it from the Wikipedia page. The WebSurfer had not yet extracted or reported this value, leading to a hallucinated fact."
+        },
+        {
+          "step": 10,
+          "agent": "Coder",
+          "error_type": "REASONING",
+          "what_went_wrong": "The coder used the unverified perigee distance of 362,600 km provided by the orchestrator without questioning its source or accuracy, propagating an incorrect value into the calculation."
+        }
+      ],
+      "critical_steps": [
+        9,
+        10
+      ],
+      "last_critical_step": 10,
+      "status": "success"
+    },
+    {
+      "graph_problem_id": "problem_10",
+      "instance_id": "gaia_validation_0009",
+      "filename": "ec09fa32-d03f-4bf8-84b0-1f16922c3ae4.json",
+      "all_error_steps": [
+        2
+      ],
+      "critical_nodes": [
+        {
+          "step": 2,
+          "agent": "MagenticOneOrchestrator",
+          "error_type": "REASONING",
+          "what_went_wrong": "The agent incorrectly claims that ball 100 is guaranteed to be ejected by a piston. This is false because the ejection mechanism depends on the position of the ball on the platform and the random firing of pistons. Ball 100 could end up in a position where it is released without being struck by a piston, just like earlier balls. The reasoning ignores the detailed mechanics of how balls are advanced and released based on piston actions."
+        }
+      ],
+      "critical_steps": [
+        2
+      ],
+      "last_critical_step": 2,
+      "status": "success"
+    }
+  ]
+}
