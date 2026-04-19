@@ -5,3 +5,10 @@ Agents_Failure_Attribution/
 __pycache__/
 .venv/
 .claude/
+*.json
+.env
+output/
+autoresearch/runs/
+autoresearch/cache/
+*.sqlite
+*.log
