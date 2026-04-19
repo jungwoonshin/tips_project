@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from autogen_agentchat.agents import CodeExecutorAgent
+from autogen_agentchat.agents import AssistantAgent, CodeExecutorAgent
 from autogen_agentchat.messages import (
     ToolCallExecutionEvent,
     ToolCallRequestEvent,
@@ -24,13 +24,50 @@ from autogen_ext.agents.magentic_one import MagenticOneCoderAgent
 from autogen_ext.agents.web_surfer import MultimodalWebSurfer
 from autogen_ext.agents.web_surfer._events import WebSurferEvent
 from autogen_ext.code_executors.local import LocalCommandLineCodeExecutor
+from autogen_core.models import CreateResult
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 
 from runners.base_runner import BaseRunner
 from trajectory.writer import TrajectoryWriter
 
+_THINK_RE = re.compile(
+    r"<think>.*?</think>\s*"           # GLM-style
+    r"|<\|channel>thought\n.*?<channel\|>\s*",  # Gemma4-style
+    re.DOTALL,
+)
+
+
+class ThinkStrippingClient(OpenAIChatCompletionClient):
+    """Wraps OpenAIChatCompletionClient to strip thinking/reasoning tags
+    that some models prepend to every response (GLM <think>, Gemma4 <|channel>)."""
+
+    async def create(self, *args, **kwargs) -> CreateResult:
+        result = await super().create(*args, **kwargs)
+        if isinstance(result.content, str):
+            result.content = _THINK_RE.sub("", result.content)
+        return result
+
 
 AGENT_DEFINITIONS = [
+    {
+        "name": "Assistant",
+        "system_prompt": (
+            "A helpful and general-purpose AI assistant with strong language skills, "
+            "Python skills, and Linux command line skills. Writes code for the "
+            "ComputerTerminal agent to run."
+        ),
+        "tools": [],
+    },
+    {
+        "name": "ComputerTerminal",
+        "system_prompt": "An agent that executes code blocks (Python, shell) and returns the output.",
+        "tools": ["python_executor", "bash"],
+    },
+    {
+        "name": "FileSurfer",
+        "system_prompt": "An agent that can handle local files, read their contents, and extract information.",
+        "tools": ["open_path", "page_down", "page_up", "find_on_page_ctrl_f", "find_next"],
+    },
     {
         "name": "WebSurfer",
         "system_prompt": (
@@ -44,25 +81,6 @@ AGENT_DEFINITIONS = [
                   "summarize_page", "sleep"],
     },
     {
-        "name": "FileSurfer",
-        "system_prompt": "An agent that can handle local files, read their contents, and extract information.",
-        "tools": ["open_path", "page_down", "page_up", "find_on_page_ctrl_f", "find_next"],
-    },
-    {
-        "name": "Coder",
-        "system_prompt": (
-            "A helpful and general-purpose AI assistant with strong language skills, "
-            "Python skills, and Linux command line skills. Writes code for the "
-            "Executor agent to run."
-        ),
-        "tools": [],
-    },
-    {
-        "name": "Executor",
-        "system_prompt": "An agent that executes code blocks (Python, shell) and returns the output.",
-        "tools": ["python_executor", "bash"],
-    },
-    {
         "name": "MagenticOneOrchestrator",
         "system_prompt": (
             "The orchestrator that coordinates the team. "
@@ -71,6 +89,23 @@ AGENT_DEFINITIONS = [
         "tools": [],
     },
 ]
+
+# Final-answer prompt from Microsoft's official agbench GAIA scenario
+# (agbench/benchmarks/GAIA/Templates/MagenticOne/scenario.py)
+GAIA_FINAL_ANSWER_PROMPT = """
+We have completed the following task:
+
+{prompt}
+
+The above messages contain the conversation that took place to complete the task.
+Read the above conversation and output a FINAL ANSWER to the question.
+To output the final answer, use the following template: FINAL ANSWER: [YOUR FINAL ANSWER]
+Your FINAL ANSWER should be a number OR as few words as possible OR a comma separated list of numbers and/or strings.
+ADDITIONALLY, your FINAL ANSWER MUST adhere to any formatting instructions specified in the original question (e.g., alphabetization, sequencing, units, rounding, decimal places, etc.)
+If you are asked for a number, express it numerically (i.e., with digits rather than words), don't use commas, and don't include units such as $ or percent signs unless specified otherwise.
+If you are asked for a string, don't use articles or abbreviations (e.g. for cities), unless specified otherwise. Don't output any final sentence punctuation such as '.', '!', or '?'.
+If you are asked for a comma separated list, apply the above rules depending on whether the elements are numbers or strings.
+""".strip()
 
 LOG_DIR = Path(__file__).resolve().parent.parent / "logs"
 
@@ -193,13 +228,13 @@ class MagenticOneRunner(BaseRunner):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.client = OpenAIChatCompletionClient(
-            model="QuantTrio/Qwen3-235B-A22B-Instruct-2507-AWQ",
+        self.client = ThinkStrippingClient(
+            model=self.model,
             base_url="http://localhost:8000/v1",
             api_key="unused",
             max_tokens=32768,
             model_info={
-                "vision": False,
+                "vision": True,
                 "function_calling": True,
                 "json_output": True,
                 "family": "unknown",
@@ -209,6 +244,18 @@ class MagenticOneRunner(BaseRunner):
     def _get_agent_definitions(self) -> list[dict]:
         return AGENT_DEFINITIONS
 
+    def _build_prompt(self, task: dict) -> str:
+        """Build prompt matching Microsoft's official agbench GAIA scenario format."""
+        question = task["Question"]
+        filename = task.get("file_name", "") or ""
+        if filename:
+            filename_prompt = (
+                f"The question is about a file, document or image, which can be "
+                f"accessed by the filename '{filename}' in the current working directory."
+            )
+            return f"{question}\n\n{filename_prompt}".strip()
+        return question
+
     async def run_single_task(self, task: dict, writer: TrajectoryWriter) -> str | None:
         prompt = self._build_prompt(task)
         task_id = task["task_id"]
@@ -216,22 +263,45 @@ class MagenticOneRunner(BaseRunner):
         msg_logger = MessageLogger(task_id)
         msg_logger.log(role="user", agent="user", content=prompt)
 
-        web_surfer = MultimodalWebSurfer(
-            "WebSurfer",
-            model_client=self.client,
-            headless=True,
+        # Per-step team.save_state() checkpoints. Enables rerun-from-state
+        # without replaying messages (see linear_identify_and_fix._rerun_single).
+        checkpoint_dir = (
+            writer.output_dir / "checkpoints" / f"problem_{writer.problem_number:02d}"
         )
-        file_surfer = FileSurfer("FileSurfer", model_client=self.client)
-        coder = MagenticOneCoderAgent("Coder", model_client=self.client)
+        checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
         work_dir = Path(tempfile.mkdtemp(prefix=f"gaia_{task_id[:8]}_"))
+
+        # Stage any referenced file into the work_dir so the file-named prompt resolves
+        filename = task.get("file_name", "") or ""
+        if filename:
+            src = self.gaia_files_dir / task.get("file_path", filename)
+            if src.exists():
+                import shutil
+                shutil.copy2(src, work_dir / filename)
+
+        # Agent construction matches MS agbench Templates/MagenticOne/scenario.py
+        coder = MagenticOneCoderAgent("Assistant", model_client=self.client)
+
         code_executor = LocalCommandLineCodeExecutor(work_dir=work_dir)
-        executor = CodeExecutorAgent("Executor", code_executor=code_executor)
+        executor = CodeExecutorAgent("ComputerTerminal", code_executor=code_executor)
+
+        file_surfer = FileSurfer(name="FileSurfer", model_client=self.client)
+
+        web_surfer = MultimodalWebSurfer(
+            name="WebSurfer",
+            model_client=self.client,
+            downloads_folder=str(work_dir),
+            debug_dir=str(LOG_DIR / f"websurfer_{task_id[:8]}"),
+            to_save_screenshots=True,
+            headless=True,
+        )
 
         team = MagenticOneGroupChat(
-            participants=[web_surfer, file_surfer, coder, executor],
+            [coder, executor, file_surfer, web_surfer],
             model_client=self.client,
-            max_turns=100,
+            max_turns=20,
+            final_answer_prompt=GAIA_FINAL_ANSWER_PROMPT.format(prompt=prompt),
         )
 
         logger = logging.getLogger("autogen_core")
@@ -240,6 +310,7 @@ class MagenticOneRunner(BaseRunner):
         logger.setLevel(logging.INFO)
 
         final_answer = None
+        last_saved_idx = -1
         try:
             async for event in team.run_stream(task=prompt):
                 event_type = getattr(event, "type", "")
@@ -295,7 +366,18 @@ class MagenticOneRunner(BaseRunner):
                 # --- TextMessage ---
                 elif isinstance(event, TextMessage):
                     msg_logger.log(role="message", agent=agent_name, content=event.content[:3000])
-                    writer.add_step(agent=agent_name, content=event.content)
+                    # Parse WebSurfer tool calls from content like: visit_url( {"url": "..."} )
+                    tc_parsed = []
+                    if agent_name == "WebSurfer":
+                        tc_match = re.match(r'^(\w+)\(\s*(\{.*\})\s*\)$', event.content.strip(), re.DOTALL)
+                        if tc_match:
+                            try:
+                                tc_parsed = [{"tool": tc_match.group(1),
+                                              "arguments": json.loads(tc_match.group(2))}]
+                            except json.JSONDecodeError:
+                                pass
+                    writer.add_step(agent=agent_name, content=event.content,
+                                    tool_calls=tc_parsed or None)
 
                 # --- ThoughtEvent ---
                 elif isinstance(event, ThoughtEvent):
@@ -343,6 +425,18 @@ class MagenticOneRunner(BaseRunner):
                         )
                         writer.add_step(agent=agent_name, content=content)
 
+                current_max_idx = writer._step_counter - 1
+                if current_max_idx > last_saved_idx:
+                    try:
+                        state = await team.save_state()
+                        cp_path = checkpoint_dir / f"step_{current_max_idx:04d}.json"
+                        cp_path.write_text(json.dumps(state, default=str))
+                    except Exception as e:
+                        logging.getLogger(__name__).warning(
+                            "checkpoint save failed at step %d: %s", current_max_idx, e,
+                        )
+                    last_saved_idx = current_max_idx
+
         finally:
             logger.removeHandler(agent_handler)
             await team.reset()
@@ -367,7 +461,7 @@ class MagenticOneRunner(BaseRunner):
                 resp = await http.post(
                     "http://localhost:8000/v1/chat/completions",
                     json={
-                        "model": "QuantTrio/Qwen3-235B-A22B-Instruct-2507-AWQ",
+                        "model": self.model,
                         "messages": [{"role": "user", "content": prompt}],
                         "max_tokens": 50,
                         "temperature": 0,

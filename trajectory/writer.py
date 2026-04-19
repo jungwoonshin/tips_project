@@ -107,9 +107,16 @@ class TrajectoryWriter:
 
         return entry
 
-    def enable_live_log(self, path: Path | str) -> None:
-        """Enable writing intermediate trajectory JSON after every step."""
-        self._live_log_path = Path(path)
+    def enable_live_log(self, path: Path | str | None = None) -> None:
+        """Enable writing intermediate trajectory JSON after every step.
+
+        If *path* is ``None``, the live log is written to the same location
+        as the final output (``output_dir/problem_NN.json``).
+        """
+        if path is None:
+            self._live_log_path = self.output_dir / f"problem_{self.problem_number:02d}.json"
+        else:
+            self._live_log_path = Path(path)
         self._live_log_path.parent.mkdir(parents=True, exist_ok=True)
 
     def _write_live_log(self) -> None:
@@ -159,7 +166,7 @@ class TrajectoryWriter:
             annotation=Annotation(),
         )
 
-        out_path = self.output_dir / f"{self.task_id}.json"
+        out_path = self.output_dir / f"problem_{self.problem_number:02d}.json"
         tmp_path = out_path.with_suffix(".tmp")
         tmp_path.write_text(
             output.model_dump_json(indent=2),

@@ -1,58 +1,402 @@
 {
   "problem_id": "problem_04",
-  "num_steps": 5,
+  "num_steps": 50,
   "model_used": "vllm on QuantTrio/Qwen3-235B-A22B-Instruct-2507-AWQ",
   "edges": [
     {
       "source": 1,
       "target": 2,
-      "reason": "Orchestrator step 1 established the overall plan to analyze the spreadsheet for the oldest Blu-Ray."
+      "reason": "Step 2 executes the Orchestrator's plan to search for the paper.",
+      "type": "plan"
     },
     {
       "source": 1,
       "target": 3,
-      "reason": "FileSurfer's action is shaped by the initial plan from Orchestrator step 1 to inspect the file."
+      "reason": "Step 3 follows the plan to search for the 2016 paper.",
+      "type": "plan"
     },
     {
       "source": 2,
       "target": 3,
-      "reason": "FileSurfer executes the specific instruction from Orchestrator step 2 to open and inspect the Excel file."
+      "reason": "Step 3 is the tool call initiated by step 2.",
+      "type": "tool_call"
     },
     {
       "source": 3,
       "target": 4,
-      "reason": "The Orchestrator's conclusion in step 4 is based on the data extracted by FileSurfer in step 3."
+      "reason": "Step 4 processes the search results from step 3.",
+      "type": "tool_result"
     },
     {
       "source": 1,
-      "target": 4,
-      "reason": "Orchestrator step 4 continues the original plan from step 1 to find the oldest Blu-Ray title."
+      "target": 5,
+      "reason": "Step 5 instructs clicking the paper link as part of the plan.",
+      "type": "plan"
     },
     {
-      "source": 2,
-      "target": 4,
-      "reason": "The final answer in step 4 depends on the task decomposition initiated in step 2."
+      "source": 4,
+      "target": 5,
+      "reason": "Step 5 references the International Potato Center link from step 4.",
+      "type": "information"
+    },
+    {
+      "source": 5,
+      "target": 6,
+      "reason": "Step 6 executes the click action from step 5.",
+      "type": "tool_call"
+    },
+    {
+      "source": 6,
+      "target": 7,
+      "reason": "Step 7 is the result of the click action in step 6.",
+      "type": "tool_result"
+    },
+    {
+      "source": 7,
+      "target": 8,
+      "reason": "Step 8 processes the page content loaded in step 7.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 9,
+      "reason": "Step 9 continues the plan to access the full paper text.",
+      "type": "plan"
+    },
+    {
+      "source": 8,
+      "target": 9,
+      "reason": "Step 9 references the citation link from step 8.",
+      "type": "information"
+    },
+    {
+      "source": 9,
+      "target": 10,
+      "reason": "Step 10 executes the click action from step 9.",
+      "type": "tool_call"
+    },
+    {
+      "source": 10,
+      "target": 11,
+      "reason": "Step 11 processes the result of the click in step 10.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 12,
+      "reason": "Step 12 adjusts the plan due to access failure.",
+      "type": "plan"
+    },
+    {
+      "source": 11,
+      "target": 12,
+      "reason": "Step 12 reacts to the failed access in step 11.",
+      "type": "error"
+    },
+    {
+      "source": 12,
+      "target": 13,
+      "reason": "Step 13 performs a new search as instructed in step 12.",
+      "type": "tool_call"
+    },
+    {
+      "source": 13,
+      "target": 14,
+      "reason": "Step 14 processes the search results from step 13.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 15,
+      "reason": "Step 15 continues the plan to locate the paper.",
+      "type": "plan"
+    },
+    {
+      "source": 14,
+      "target": 15,
+      "reason": "Step 15 reacts to the lack of full text in step 14.",
+      "type": "error"
+    },
+    {
+      "source": 15,
+      "target": 16,
+      "reason": "Step 16 executes the search query from step 15.",
+      "type": "tool_call"
+    },
+    {
+      "source": 16,
+      "target": 17,
+      "reason": "Step 17 processes the search results from step 16.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 18,
+      "reason": "Step 18 adjusts strategy to use Google Scholar.",
+      "type": "plan"
+    },
+    {
+      "source": 17,
+      "target": 18,
+      "reason": "Step 18 reacts to continued access failure in step 17.",
+      "type": "error"
+    },
+    {
+      "source": 18,
+      "target": 19,
+      "reason": "Step 19 performs the Google Scholar search from step 18.",
+      "type": "tool_call"
+    },
+    {
+      "source": 19,
+      "target": 20,
+      "reason": "Step 20 processes the search results from step 19.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 21,
+      "reason": "Step 21 persists in accessing the paper.",
+      "type": "plan"
+    },
+    {
+      "source": 20,
+      "target": 21,
+      "reason": "Step 21 reacts to failed access in step 20.",
+      "type": "error"
+    },
+    {
+      "source": 21,
+      "target": 22,
+      "reason": "Step 22 attempts to visit the handle URL from step 21.",
+      "type": "tool_call"
+    },
+    {
+      "source": 22,
+      "target": 23,
+      "reason": "Step 23 processes the HTTP 429 response from step 22.",
+      "type": "tool_result"
+    },
+    {
+      "source": 23,
+      "target": 24,
+      "reason": "Step 24 resets the browser after the error in step 23.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 25,
+      "reason": "Step 25 updates the plan based on access challenges.",
+      "type": "plan"
+    },
+    {
+      "source": 23,
+      "target": 25,
+      "reason": "Step 25 analyzes the rate-limiting error from step 23.",
+      "type": "error"
+    },
+    {
+      "source": 25,
+      "target": 26,
+      "reason": "Step 26 continues the updated plan to find the paper.",
+      "type": "plan"
+    },
+    {
+      "source": 26,
+      "target": 27,
+      "reason": "Step 27 executes the search query from step 26.",
+      "type": "tool_call"
+    },
+    {
+      "source": 27,
+      "target": 28,
+      "reason": "Step 28 processes the search results from step 27.",
+      "type": "tool_result"
+    },
+    {
+      "source": 25,
+      "target": 29,
+      "reason": "Step 29 continues the search strategy from step 25.",
+      "type": "plan"
+    },
+    {
+      "source": 28,
+      "target": 29,
+      "reason": "Step 29 reacts to the incomplete results in step 28.",
+      "type": "error"
+    },
+    {
+      "source": 29,
+      "target": 30,
+      "reason": "Step 30 performs the Google Scholar search from step 29.",
+      "type": "tool_call"
+    },
+    {
+      "source": 30,
+      "target": 31,
+      "reason": "Step 31 processes the search results from step 30.",
+      "type": "tool_result"
+    },
+    {
+      "source": 29,
+      "target": 32,
+      "reason": "Step 32 directs to visit Google Scholar directly.",
+      "type": "plan"
+    },
+    {
+      "source": 31,
+      "target": 32,
+      "reason": "Step 32 reacts to search failure in step 31.",
+      "type": "error"
+    },
+    {
+      "source": 32,
+      "target": 33,
+      "reason": "Step 33 navigates to Google Scholar as instructed.",
+      "type": "tool_call"
+    },
+    {
+      "source": 33,
+      "target": 34,
+      "reason": "Step 34 processes the Google Scholar page load from step 33.",
+      "type": "tool_result"
+    },
+    {
+      "source": 25,
+      "target": 35,
+      "reason": "Step 35 continues the paper search plan.",
+      "type": "plan"
+    },
+    {
+      "source": 34,
+      "target": 36,
+      "reason": "Step 36 inputs the search query into Google Scholar.",
+      "type": "tool_call"
+    },
+    {
+      "source": 36,
+      "target": 37,
+      "reason": "Step 37 processes the search results from step 36.",
+      "type": "tool_result"
+    },
+    {
+      "source": 25,
+      "target": 38,
+      "reason": "Step 38 instructs to click on the paper title.",
+      "type": "plan"
+    },
+    {
+      "source": 37,
+      "target": 38,
+      "reason": "Step 38 references the paper title from step 37.",
+      "type": "information"
+    },
+    {
+      "source": 38,
+      "target": 39,
+      "reason": "Step 39 clicks the paper title link from step 38.",
+      "type": "tool_call"
+    },
+    {
+      "source": 39,
+      "target": 40,
+      "reason": "Step 40 processes the article page from step 39.",
+      "type": "tool_result"
+    },
+    {
+      "source": 25,
+      "target": 41,
+      "reason": "Step 41 continues the plan to access the full text.",
+      "type": "plan"
+    },
+    {
+      "source": 40,
+      "target": 41,
+      "reason": "Step 41 references the 'ePDF' link from step 40.",
+      "type": "information"
+    },
+    {
+      "source": 41,
+      "target": 42,
+      "reason": "Step 42 clicks the 'ePDF' button from step 41.",
+      "type": "tool_call"
+    },
+    {
+      "source": 42,
+      "target": 43,
+      "reason": "Step 43 processes the security verification page from step 42.",
+      "type": "tool_result"
+    },
+    {
+      "source": 25,
+      "target": 44,
+      "reason": "Step 44 adjusts strategy due to access barriers.",
+      "type": "plan"
+    },
+    {
+      "source": 43,
+      "target": 44,
+      "reason": "Step 44 reacts to the security block in step 43.",
+      "type": "error"
+    },
+    {
+      "source": 44,
+      "target": 45,
+      "reason": "Step 45 searches for alternative sources as instructed in step 44.",
+      "type": "tool_call"
+    },
+    {
+      "source": 45,
+      "target": 46,
+      "reason": "Step 46 processes the search results from step 45.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 47,
+      "reason": "Step 47 shifts to using domain knowledge due to access issues.",
+      "type": "plan"
+    },
+    {
+      "source": 46,
+      "target": 47,
+      "reason": "Step 47 reacts to the failed access in step 46.",
+      "type": "error"
+    },
+    {
+      "source": 47,
+      "target": 48,
+      "reason": "Step 48 provides the EC numbers based on step 47's query.",
+      "type": "tool_call"
+    },
+    {
+      "source": 48,
+      "target": 49,
+      "reason": "Step 49 uses the EC numbers from step 48 to form the final answer.",
+      "type": "tool_result"
     }
   ],
   "stats": {
-    "num_edges": 6,
-    "num_adjacent_edges": 3,
-    "num_skip_edges": 3,
-    "adjacent_ratio": 0.5,
-    "density": 0.6,
-    "max_skip_distance": 3,
-    "avg_skip_distance": 2.33,
-    "avg_parents_per_child": 2.0,
-    "multi_parent_fraction": 0.6667,
-    "max_in_degree": 3,
-    "max_out_degree": 3,
+    "num_edges": 62,
+    "num_adjacent_edges": 45,
+    "num_skip_edges": 17,
+    "adjacent_ratio": 0.7258,
+    "density": 0.0506,
+    "max_skip_distance": 46,
+    "avg_skip_distance": 12.65,
+    "avg_parents_per_child": 1.29,
+    "multi_parent_fraction": 0.2917,
+    "max_in_degree": 2,
+    "max_out_degree": 10,
     "is_linked_list": false,
-    "is_under_counted": false
+    "is_under_counted": true
   },
-  "input_tokens": 3072,
-  "output_tokens": 280,
-  "latency_seconds": 3.35,
-  "raw_response": "{\n  \"edges\": [\n    {\n      \"source\": 1,\n      \"target\": 2,\n      \"reason\": \"Orchestrator step 1 established the overall plan to analyze the spreadsheet for the oldest Blu-Ray.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 3,\n      \"reason\": \"FileSurfer's action is shaped by the initial plan from Orchestrator step 1 to inspect the file.\"\n    },\n    {\n      \"source\": 2,\n      \"target\": 3,\n      \"reason\": \"FileSurfer executes the specific instruction from Orchestrator step 2 to open and inspect the Excel file.\"\n    },\n    {\n      \"source\": 3,\n      \"target\": 4,\n      \"reason\": \"The Orchestrator's conclusion in step 4 is based on the data extracted by FileSurfer in step 3.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 4,\n      \"reason\": \"Orchestrator step 4 continues the original plan from step 1 to find the oldest Blu-Ray title.\"\n    },\n    {\n      \"source\": 2,\n      \"target\": 4,\n      \"reason\": \"The final answer in step 4 depends on the task decomposition initiated in step 2.\"\n    }\n  ]\n}",
+  "input_tokens": 22563,
+  "output_tokens": 2876,
+  "latency_seconds": 37.55,
+  "raw_response": "{\n  \"edges\": [\n    {\n      \"source\": 1,\n      \"target\": 2,\n      \"type\": \"plan\",\n      \"reason\": \"Step 2 executes the Orchestrator's plan to search for the paper.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 3,\n      \"type\": \"plan\",\n      \"reason\": \"Step 3 follows the plan to search for the 2016 paper.\"\n    },\n    {\n      \"source\": 2,\n      \"target\": 3,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 3 is the tool call initiated by step 2.\"\n    },\n    {\n      \"source\": 3,\n      \"target\": 4,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 4 processes the search results from step 3.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 5,\n      \"type\": \"plan\",\n      \"reason\": \"Step 5 instructs clicking the paper link as part of the plan.\"\n    },\n    {\n      \"source\": 4,\n      \"target\": 5,\n      \"type\": \"information\",\n      \"reason\": \"Step 5 references the International Potato Center link from step 4.\"\n    },\n    {\n      \"source\": 5,\n      \"target\": 6,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 6 executes the click action from step 5.\"\n    },\n    {\n      \"source\": 6,\n      \"target\": 7,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 7 is the result of the click action in step 6.\"\n    },\n    {\n      \"source\": 7,\n      \"target\": 8,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 8 processes the page content loaded in step 7.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 9,\n      \"type\": \"plan\",\n      \"reason\": \"Step 9 continues the plan to access the full paper text.\"\n    },\n    {\n      \"source\": 8,\n      \"target\": 9,\n      \"type\": \"information\",\n      \"reason\": \"Step 9 references the citation link from step 8.\"\n    },\n    {\n      \"source\": 9,\n      \"target\": 10,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 10 executes the click action from step 9.\"\n    },\n    {\n      \"source\": 10,\n      \"target\": 11,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 11 processes the result of the click in step 10.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 12,\n      \"type\": \"plan\",\n      \"reason\": \"Step 12 adjusts the plan due to access failure.\"\n    },\n    {\n      \"source\": 11,\n      \"target\": 12,\n      \"type\": \"error\",\n      \"reason\": \"Step 12 reacts to the failed access in step 11.\"\n    },\n    {\n      \"source\": 12,\n      \"target\": 13,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 13 performs a new search as instructed in step 12.\"\n    },\n    {\n      \"source\": 13,\n      \"target\": 14,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 14 processes the search results from step 13.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 15,\n      \"type\": \"plan\",\n      \"reason\": \"Step 15 continues the plan to locate the paper.\"\n    },\n    {\n      \"source\": 14,\n      \"target\": 15,\n      \"type\": \"error\",\n      \"reason\": \"Step 15 reacts to the lack of full text in step 14.\"\n    },\n    {\n      \"source\": 15,\n      \"target\": 16,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 16 executes the search query from step 15.\"\n    },\n    {\n      \"source\": 16,\n      \"target\": 17,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 17 processes the search results from step 16.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 18,\n      \"type\": \"plan\",\n      \"reason\": \"Step 18 adjusts strategy to use Google Scholar.\"\n    },\n    {\n      \"source\": 17,\n      \"target\": 18,\n      \"type\": \"error\",\n      \"reason\": \"Step 18 reacts to continued access failure in step 17.\"\n    },\n    {\n      \"source\": 18,\n      \"target\": 19,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 19 performs the Google Scholar search from step 18.\"\n    },\n    {\n      \"source\": 19,\n      \"target\": 20,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 20 processes the search results from step 19.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 21,\n      \"type\": \"plan\",\n      \"reason\": \"Step 21 persists in accessing the paper.\"\n    },\n    {\n      \"source\": 20,\n      \"target\": 21,\n      \"type\": \"error\",\n      \"reason\": \"Step 21 reacts to failed access in step 20.\"\n    },\n    {\n      \"source\": 21,\n      \"target\": 22,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 22 attempts to visit the handle URL from step 21.\"\n    },\n    {\n      \"source\": 22,\n      \"target\": 23,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 23 processes the HTTP 429 response from step 22.\"\n    },\n    {\n      \"source\": 23,\n      \"target\": 24,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 24 resets the browser after the error in step 23.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 25,\n      \"type\": \"plan\",\n      \"reason\": \"Step 25 updates the plan based on access challenges.\"\n    },\n    {\n      \"source\": 23,\n      \"target\": 25,\n      \"type\": \"error\",\n      \"reason\": \"Step 25 analyzes the rate-limiting error from step 23.\"\n    },\n    {\n      \"source\": 25,\n      \"target\": 26,\n      \"type\": \"plan\",\n      \"reason\": \"Step 26 continues the updated plan to find the paper.\"\n    },\n    {\n      \"source\": 26,\n      \"target\": 27,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 27 executes the search query from step 26.\"\n    },\n    {\n      \"source\": 27,\n      \"target\": 28,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 28 processes the search results from step 27.\"\n    },\n    {\n      \"source\": 25,\n      \"target\": 29,\n      \"type\": \"plan\",\n      \"reason\": \"Step 29 continues the search strategy from step 25.\"\n    },\n    {\n      \"source\": 28,\n      \"target\": 29,\n      \"type\": \"error\",\n      \"reason\": \"Step 29 reacts to the incomplete results in step 28.\"\n    },\n    {\n      \"source\": 29,\n      \"target\": 30,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 30 performs the Google Scholar search from step 29.\"\n    },\n    {\n      \"source\": 30,\n      \"target\": 31,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 31 processes the search results from step 30.\"\n    },\n    {\n      \"source\": 29,\n      \"target\": 32,\n      \"type\": \"plan\",\n      \"reason\": \"Step 32 directs to visit Google Scholar directly.\"\n    },\n    {\n      \"source\": 31,\n      \"target\": 32,\n      \"type\": \"error\",\n      \"reason\": \"Step 32 reacts to search failure in step 31.\"\n    },\n    {\n      \"source\": 32,\n      \"target\": 33,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 33 navigates to Google Scholar as instructed.\"\n    },\n    {\n      \"source\": 33,\n      \"target\": 34,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 34 processes the Google Scholar page load from step 33.\"\n    },\n    {\n      \"source\": 25,\n      \"target\": 35,\n      \"type\": \"plan\",\n      \"reason\": \"Step 35 continues the paper search plan.\"\n    },\n    {\n      \"source\": 34,\n      \"target\": 36,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 36 inputs the search query into Google Scholar.\"\n    },\n    {\n      \"source\": 36,\n      \"target\": 37,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 37 processes the search results from step 36.\"\n    },\n    {\n      \"source\": 25,\n      \"target\": 38,\n      \"type\": \"plan\",\n      \"reason\": \"Step 38 instructs to click on the paper title.\"\n    },\n    {\n      \"source\": 37,\n      \"target\": 38,\n      \"type\": \"information\",\n      \"reason\": \"Step 38 references the paper title from step 37.\"\n    },\n    {\n      \"source\": 38,\n      \"target\": 39,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 39 clicks the paper title link from step 38.\"\n    },\n    {\n      \"source\": 39,\n      \"target\": 40,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 40 processes the article page from step 39.\"\n    },\n    {\n      \"source\": 25,\n      \"target\": 41,\n      \"type\": \"plan\",\n      \"reason\": \"Step 41 continues the plan to access the full text.\"\n    },\n    {\n      \"source\": 40,\n      \"target\": 41,\n      \"type\": \"information\",\n      \"reason\": \"Step 41 references the 'ePDF' link from step 40.\"\n    },\n    {\n      \"source\": 41,\n      \"target\": 42,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 42 clicks the 'ePDF' button from step 41.\"\n    },\n    {\n      \"source\": 42,\n      \"target\": 43,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 43 processes the security verification page from step 42.\"\n    },\n    {\n      \"source\": 25,\n      \"target\": 44,\n      \"type\": \"plan\",\n      \"reason\": \"Step 44 adjusts strategy due to access barriers.\"\n    },\n    {\n      \"source\": 43,\n      \"target\": 44,\n      \"type\": \"error\",\n      \"reason\": \"Step 44 reacts to the security block in step 43.\"\n    },\n    {\n      \"source\": 44,\n      \"target\": 45,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 45 searches for alternative sources as instructed in step 44.\"\n    },\n    {\n      \"source\": 45,\n      \"target\": 46,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 46 processes the search results from step 45.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 47,\n      \"type\": \"plan\",\n      \"reason\": \"Step 47 shifts to using domain knowledge due to access issues.\"\n    },\n    {\n      \"source\": 46,\n      \"target\": 47,\n      \"type\": \"error\",\n      \"reason\": \"Step 47 reacts to the failed access in step 46.\"\n    },\n    {\n      \"source\": 47,\n      \"target\": 48,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 48 provides the EC numbers based on step 47's query.\"\n    },\n    {\n      \"source\": 48,\n      \"target\": 49,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 49 uses the EC numbers from step 48 to form the final answer.\"\n    }\n  ]\n}",
   "status": "success",
-  "warnings": []
+  "warnings": [
+    "under_counted_parents: only 29% of targets have 2+ parents"
+  ]
 }

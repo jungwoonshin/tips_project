@@ -41,8 +41,8 @@ class BaseRunner(ABC):
                 tasks.append(task)
         return tasks
 
-    def _is_completed(self, task_id: str) -> bool:
-        return (self.output_dir / f"{task_id}.json").exists()
+    def _is_completed(self, task_id: str, problem_number: int = 0) -> bool:
+        return (self.output_dir / f"problem_{problem_number:02d}.json").exists()
 
     def _build_prompt(self, task: dict) -> str:
         question = task["Question"]
@@ -94,7 +94,7 @@ class BaseRunner(ABC):
             tid = task["task_id"]
             short_id = tid[:8]
 
-            if self._is_completed(tid):
+            if self._is_completed(tid, problem_number=i):
                 skipped += 1
                 print(f"  ⏭ [{i+1}/{total}] {short_id} SKIP (already done)")
                 print(_bar(i))

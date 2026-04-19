@@ -21,7 +21,7 @@ def main():
     )
     parser.add_argument("--split", default="validation", choices=["validation", "test"])
     parser.add_argument("--levels", nargs="+", type=int, default=None, help="Filter by GAIA level (1, 2, 3)")
-    parser.add_argument("--model", default="QuantTrio/Qwen3-235B-A22B-Instruct-2507-AWQ", help="Model name")
+    parser.add_argument("--model", default="google/gemma-4-31b-it", help="Model name")
     parser.add_argument("--max-tasks", type=int, default=None, help="Limit number of tasks")
     parser.add_argument("--task-ids", nargs="+", default=None, help="Run specific task IDs only")
     parser.add_argument("--timeout", type=int, default=600, help="Per-task timeout in seconds")

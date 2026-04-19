@@ -1,6 +1,7 @@
 """OWL (CAMEL-AI) runner for GAIA benchmark with trajectory capture."""
 from __future__ import annotations
 
+import json
 import re
 from typing import Any
 
@@ -32,9 +33,11 @@ class OWLRunner(BaseRunner):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.model_backend = ModelFactory.create(
-            model_platform=ModelPlatformType.OLLAMA,
-            model_type="gpt-oss:120b",
-            url="http://localhost:11434/v1",
+            model_platform=ModelPlatformType.OPENAI_COMPATIBLE_MODEL,
+            model_type=self.model,
+            url="http://localhost:8000/v1",
+            api_key="unused",
+            model_config_dict={"max_tokens": 4096, "temperature": 0},
         )
 
     def _get_agent_definitions(self) -> list[dict]:
@@ -80,13 +83,22 @@ class OWLRunner(BaseRunner):
 
         # Process response
         content = ""
-        if response.msgs:
-            content = response.msgs[0].content
-
-            # Extract tool calls if any
+        def _record_response(resp):
+            """Extract tool calls/results from a CAMEL response and emit steps."""
             tool_calls_data = []
-            for tc in response.info.get("tool_calls", []):
-                if hasattr(tc, "function"):
+            tool_results_data = []
+            for tc in resp.info.get("tool_calls", []):
+                if hasattr(tc, "tool_name"):
+                    tool_calls_data.append({
+                        "tool": tc.tool_name,
+                        "arguments": dict(tc.args) if tc.args else {},
+                    })
+                    tool_results_data.append({
+                        "tool": tc.tool_name,
+                        "output": str(tc.result) if tc.result is not None else "",
+                        "is_error": False,
+                    })
+                elif hasattr(tc, "function"):
                     func = tc.function
                     tool_calls_data.append({
                         "tool": getattr(func, "name", "unknown"),
@@ -97,12 +109,29 @@ class OWLRunner(BaseRunner):
                         "tool": tc.get("function", {}).get("name", "unknown"),
                         "arguments": tc.get("function", {}).get("arguments", {}),
                     })
-
+            # Emit each tool call + its result as separate steps so the
+            # trajectory reflects the agent's actual tool activity.
+            for call, result in zip(tool_calls_data, tool_results_data):
+                writer.add_step(
+                    agent="Assistant",
+                    content=f"{call['tool']}({json.dumps(call['arguments'])})",
+                    tool_calls=[call],
+                )
+                writer.add_step(
+                    agent="ComputerTerminal",
+                    content=f"[{result['tool']}] {result['output'][:2000]}",
+                    tool_results=[result],
+                )
+            # Final assistant message (reasoning / answer)
+            msg_content = resp.msgs[0].content if resp.msgs else ""
             writer.add_step(
                 agent="Assistant",
-                content=content[:2000],
-                tool_calls=tool_calls_data if tool_calls_data else None,
+                content=msg_content[:2000],
             )
+
+        if response.msgs:
+            content = response.msgs[0].content
+            _record_response(response)
 
             # Multi-turn: continue if no final answer yet
             max_turns = 8
@@ -122,21 +151,7 @@ class OWLRunner(BaseRunner):
                 response = agent.step(follow_up)
                 if response.msgs:
                     content = response.msgs[0].content
-
-                    tool_calls_data = []
-                    for tc in response.info.get("tool_calls", []):
-                        if hasattr(tc, "function"):
-                            func = tc.function
-                            tool_calls_data.append({
-                                "tool": getattr(func, "name", "unknown"),
-                                "arguments": _parse_args(getattr(func, "arguments", "")),
-                            })
-
-                    writer.add_step(
-                        agent="Assistant",
-                        content=content[:2000],
-                        tool_calls=tool_calls_data if tool_calls_data else None,
-                    )
+                    _record_response(response)
 
             final_answer = self._extract_answer(content)
             return final_answer

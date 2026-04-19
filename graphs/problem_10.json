@@ -1,43 +1,310 @@
 {
   "problem_id": "problem_10",
-  "num_steps": 3,
+  "num_steps": 37,
   "model_used": "vllm on QuantTrio/Qwen3-235B-A22B-Instruct-2507-AWQ",
   "edges": [
     {
       "source": 0,
       "target": 1,
-      "reason": "Step 1 begins processing the user query from step 0."
-    },
-    {
-      "source": 0,
-      "target": 2,
-      "reason": "Step 2 answers the original user question about ball selection."
+      "reason": "Step 1 references the date July 2, 1959 from the user query.",
+      "type": "information"
     },
     {
       "source": 1,
       "target": 2,
-      "reason": "Step 2 executes the Orchestrator's plan articulated in step 1."
+      "reason": "Step 2 executes the plan to search for the 1959 document.",
+      "type": "plan"
+    },
+    {
+      "source": 1,
+      "target": 3,
+      "reason": "Step 3 follows the plan to search for the 1959 document.",
+      "type": "plan"
+    },
+    {
+      "source": 2,
+      "target": 3,
+      "reason": "Step 3 is the tool call initiated by step 2's instruction.",
+      "type": "tool_call"
+    },
+    {
+      "source": 3,
+      "target": 4,
+      "reason": "Step 4 reports the result of the web search from step 3.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 5,
+      "reason": "Step 5 continues the plan to retrieve the full text of the document.",
+      "type": "plan"
+    },
+    {
+      "source": 4,
+      "target": 5,
+      "reason": "Step 5 uses the Internet Archive URL found in step 4.",
+      "type": "information"
+    },
+    {
+      "source": 5,
+      "target": 6,
+      "reason": "Step 6 executes the click action specified in step 5.",
+      "type": "tool_call"
+    },
+    {
+      "source": 6,
+      "target": 7,
+      "reason": "Step 7 is the result of opening a new tab after the click.",
+      "type": "tool_result"
+    },
+    {
+      "source": 7,
+      "target": 8,
+      "reason": "Step 8 shows the result of navigating to the image search page.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 9,
+      "reason": "Step 9 continues the plan to access the Internet Archive link.",
+      "type": "plan"
+    },
+    {
+      "source": 8,
+      "target": 9,
+      "reason": "Step 9 references the same Internet Archive URL from step 8.",
+      "type": "information"
+    },
+    {
+      "source": 9,
+      "target": 10,
+      "reason": "Step 10 executes the visit_url action specified in step 9.",
+      "type": "tool_call"
+    },
+    {
+      "source": 10,
+      "target": 11,
+      "reason": "Step 11 reports the error from visiting the URL in step 10.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 12,
+      "reason": "Step 12 initiates a new search after the archive failure.",
+      "type": "plan"
+    },
+    {
+      "source": 11,
+      "target": 12,
+      "reason": "Step 12 reacts to the 'Item cannot be found' error in step 11.",
+      "type": "error"
+    },
+    {
+      "source": 12,
+      "target": 13,
+      "reason": "Step 13 executes the web search from step 12.",
+      "type": "tool_call"
+    },
+    {
+      "source": 13,
+      "target": 14,
+      "reason": "Step 14 shows the result of the alternative source search.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 15,
+      "reason": "Step 15 continues the plan to search Biodiversity Heritage Library.",
+      "type": "plan"
+    },
+    {
+      "source": 14,
+      "target": 15,
+      "reason": "Step 15 uses the BHL source mentioned in step 14's results.",
+      "type": "information"
+    },
+    {
+      "source": 15,
+      "target": 16,
+      "reason": "Step 16 executes the visit_url action to BHL.",
+      "type": "tool_call"
+    },
+    {
+      "source": 16,
+      "target": 17,
+      "reason": "Step 17 shows the security verification page from BHL.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 18,
+      "reason": "Step 18 instructs to wait for security verification to complete.",
+      "type": "plan"
+    },
+    {
+      "source": 17,
+      "target": 18,
+      "reason": "Step 18 responds to the security page shown in step 17.",
+      "type": "information"
+    },
+    {
+      "source": 18,
+      "target": 19,
+      "reason": "Step 19 executes the sleep action from step 18.",
+      "type": "tool_call"
+    },
+    {
+      "source": 19,
+      "target": 20,
+      "reason": "Step 20 shows the result of waiting, still on security page.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 21,
+      "reason": "Step 21 shifts focus to the official USDA AMS website.",
+      "type": "plan"
+    },
+    {
+      "source": 20,
+      "target": 21,
+      "reason": "Step 21 reacts to the continued access issue from step 20.",
+      "type": "error"
+    },
+    {
+      "source": 21,
+      "target": 22,
+      "reason": "Step 22 executes the visit_url to USDA AMS.",
+      "type": "tool_call"
+    },
+    {
+      "source": 22,
+      "target": 23,
+      "reason": "Step 23 reports the 'Access Denied' error from the USDA site.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 24,
+      "reason": "Step 24 initiates a search for cached versions of the document.",
+      "type": "plan"
+    },
+    {
+      "source": 23,
+      "target": 24,
+      "reason": "Step 24 reacts to the 'Access Denied' error in step 23.",
+      "type": "error"
+    },
+    {
+      "source": 24,
+      "target": 25,
+      "reason": "Step 25 executes the web search for cached versions.",
+      "type": "tool_call"
+    },
+    {
+      "source": 25,
+      "target": 26,
+      "reason": "Step 26 shows the result of the cached search query.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 27,
+      "reason": "Step 27 instructs to use Google cache or Wayback Machine.",
+      "type": "plan"
+    },
+    {
+      "source": 26,
+      "target": 27,
+      "reason": "Step 27 builds on the cached search results from step 26.",
+      "type": "information"
+    },
+    {
+      "source": 27,
+      "target": 28,
+      "reason": "Step 28 executes the web search for cache or Wayback Machine.",
+      "type": "tool_call"
+    },
+    {
+      "source": 28,
+      "target": 29,
+      "reason": "Step 29 shows the result of the cache search query.",
+      "type": "tool_result"
+    },
+    {
+      "source": 1,
+      "target": 30,
+      "reason": "Step 30 asks for an assessment of the document's authenticity.",
+      "type": "plan"
+    },
+    {
+      "source": 29,
+      "target": 30,
+      "reason": "Step 30 uses the lack of document access from step 29.",
+      "type": "information"
+    },
+    {
+      "source": 30,
+      "target": 31,
+      "reason": "Step 31 is the coder's analysis in response to step 30.",
+      "type": "tool_call"
+    },
+    {
+      "source": 31,
+      "target": 32,
+      "reason": "Step 32 resets the browser after the coder's conclusion.",
+      "type": "tool_result"
+    },
+    {
+      "source": 31,
+      "target": 33,
+      "reason": "Step 33 updates the fact sheet based on step 31's analysis.",
+      "type": "plan"
+    },
+    {
+      "source": 32,
+      "target": 34,
+      "reason": "Step 34 resets the browser as instructed.",
+      "type": "tool_result"
+    },
+    {
+      "source": 33,
+      "target": 35,
+      "reason": "Step 35 updates the fact sheet with new evidence from step 33.",
+      "type": "plan"
+    },
+    {
+      "source": 34,
+      "target": 36,
+      "reason": "Step 36 resets the browser after step 34.",
+      "type": "tool_result"
+    },
+    {
+      "source": 35,
+      "target": 36,
+      "reason": "Step 36 delivers the final answer based on the updated plan.",
+      "type": "plan"
     }
   ],
   "stats": {
-    "num_edges": 3,
-    "num_adjacent_edges": 2,
-    "num_skip_edges": 1,
-    "adjacent_ratio": 0.6667,
-    "density": 1.0,
-    "max_skip_distance": 2,
-    "avg_skip_distance": 2.0,
-    "avg_parents_per_child": 1.5,
-    "multi_parent_fraction": 0.5,
+    "num_edges": 47,
+    "num_adjacent_edges": 33,
+    "num_skip_edges": 14,
+    "adjacent_ratio": 0.7021,
+    "density": 0.0706,
+    "max_skip_distance": 29,
+    "avg_skip_distance": 11.57,
+    "avg_parents_per_child": 1.31,
+    "multi_parent_fraction": 0.3056,
     "max_in_degree": 2,
-    "max_out_degree": 2,
+    "max_out_degree": 11,
     "is_linked_list": false,
     "is_under_counted": false
   },
-  "input_tokens": 3055,
-  "output_tokens": 120,
-  "latency_seconds": 1.62,
-  "raw_response": "{\n  \"edges\": [\n    {\n      \"source\": 0,\n      \"target\": 1,\n      \"reason\": \"Step 1 begins processing the user query from step 0.\"\n    },\n    {\n      \"source\": 0,\n      \"target\": 2,\n      \"reason\": \"Step 2 answers the original user question about ball selection.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 2,\n      \"reason\": \"Step 2 executes the Orchestrator's plan articulated in step 1.\"\n    }\n  ]\n}",
+  "input_tokens": 17584,
+  "output_tokens": 2292,
+  "latency_seconds": 33.26,
+  "raw_response": "{\n  \"edges\": [\n    {\n      \"source\": 0,\n      \"target\": 1,\n      \"type\": \"information\",\n      \"reason\": \"Step 1 references the date July 2, 1959 from the user query.\"\n    },\n    {\n      \"source\": 0,\n      \"target\": 1,\n      \"type\": \"information\",\n      \"reason\": \"Step 1 identifies the subject: U.S. standards for processed products.\"\n    },\n    {\n      \"source\": 0,\n      \"target\": 1,\n      \"type\": \"information\",\n      \"reason\": \"Step 1 extracts the core task: percentage of standards superseded.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 2,\n      \"type\": \"plan\",\n      \"reason\": \"Step 2 executes the plan to search for the 1959 document.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 3,\n      \"type\": \"plan\",\n      \"reason\": \"Step 3 follows the plan to search for the 1959 document.\"\n    },\n    {\n      \"source\": 2,\n      \"target\": 3,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 3 is the tool call initiated by step 2's instruction.\"\n    },\n    {\n      \"source\": 3,\n      \"target\": 4,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 4 reports the result of the web search from step 3.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 5,\n      \"type\": \"plan\",\n      \"reason\": \"Step 5 continues the plan to retrieve the full text of the document.\"\n    },\n    {\n      \"source\": 4,\n      \"target\": 5,\n      \"type\": \"information\",\n      \"reason\": \"Step 5 uses the Internet Archive URL found in step 4.\"\n    },\n    {\n      \"source\": 5,\n      \"target\": 6,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 6 executes the click action specified in step 5.\"\n    },\n    {\n      \"source\": 6,\n      \"target\": 7,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 7 is the result of opening a new tab after the click.\"\n    },\n    {\n      \"source\": 7,\n      \"target\": 8,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 8 shows the result of navigating to the image search page.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 9,\n      \"type\": \"plan\",\n      \"reason\": \"Step 9 continues the plan to access the Internet Archive link.\"\n    },\n    {\n      \"source\": 8,\n      \"target\": 9,\n      \"type\": \"information\",\n      \"reason\": \"Step 9 references the same Internet Archive URL from step 8.\"\n    },\n    {\n      \"source\": 9,\n      \"target\": 10,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 10 executes the visit_url action specified in step 9.\"\n    },\n    {\n      \"source\": 10,\n      \"target\": 11,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 11 reports the error from visiting the URL in step 10.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 12,\n      \"type\": \"plan\",\n      \"reason\": \"Step 12 initiates a new search after the archive failure.\"\n    },\n    {\n      \"source\": 11,\n      \"target\": 12,\n      \"type\": \"error\",\n      \"reason\": \"Step 12 reacts to the 'Item cannot be found' error in step 11.\"\n    },\n    {\n      \"source\": 12,\n      \"target\": 13,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 13 executes the web search from step 12.\"\n    },\n    {\n      \"source\": 13,\n      \"target\": 14,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 14 shows the result of the alternative source search.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 15,\n      \"type\": \"plan\",\n      \"reason\": \"Step 15 continues the plan to search Biodiversity Heritage Library.\"\n    },\n    {\n      \"source\": 14,\n      \"target\": 15,\n      \"type\": \"information\",\n      \"reason\": \"Step 15 uses the BHL source mentioned in step 14's results.\"\n    },\n    {\n      \"source\": 15,\n      \"target\": 16,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 16 executes the visit_url action to BHL.\"\n    },\n    {\n      \"source\": 16,\n      \"target\": 17,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 17 shows the security verification page from BHL.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 18,\n      \"type\": \"plan\",\n      \"reason\": \"Step 18 instructs to wait for security verification to complete.\"\n    },\n    {\n      \"source\": 17,\n      \"target\": 18,\n      \"type\": \"information\",\n      \"reason\": \"Step 18 responds to the security page shown in step 17.\"\n    },\n    {\n      \"source\": 18,\n      \"target\": 19,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 19 executes the sleep action from step 18.\"\n    },\n    {\n      \"source\": 19,\n      \"target\": 20,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 20 shows the result of waiting, still on security page.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 21,\n      \"type\": \"plan\",\n      \"reason\": \"Step 21 shifts focus to the official USDA AMS website.\"\n    },\n    {\n      \"source\": 20,\n      \"target\": 21,\n      \"type\": \"error\",\n      \"reason\": \"Step 21 reacts to the continued access issue from step 20.\"\n    },\n    {\n      \"source\": 21,\n      \"target\": 22,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 22 executes the visit_url to USDA AMS.\"\n    },\n    {\n      \"source\": 22,\n      \"target\": 23,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 23 reports the 'Access Denied' error from the USDA site.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 24,\n      \"type\": \"plan\",\n      \"reason\": \"Step 24 initiates a search for cached versions of the document.\"\n    },\n    {\n      \"source\": 23,\n      \"target\": 24,\n      \"type\": \"error\",\n      \"reason\": \"Step 24 reacts to the 'Access Denied' error in step 23.\"\n    },\n    {\n      \"source\": 24,\n      \"target\": 25,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 25 executes the web search for cached versions.\"\n    },\n    {\n      \"source\": 25,\n      \"target\": 26,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 26 shows the result of the cached search query.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 27,\n      \"type\": \"plan\",\n      \"reason\": \"Step 27 instructs to use Google cache or Wayback Machine.\"\n    },\n    {\n      \"source\": 26,\n      \"target\": 27,\n      \"type\": \"information\",\n      \"reason\": \"Step 27 builds on the cached search results from step 26.\"\n    },\n    {\n      \"source\": 27,\n      \"target\": 28,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 28 executes the web search for cache or Wayback Machine.\"\n    },\n    {\n      \"source\": 28,\n      \"target\": 29,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 29 shows the result of the cache search query.\"\n    },\n    {\n      \"source\": 1,\n      \"target\": 30,\n      \"type\": \"plan\",\n      \"reason\": \"Step 30 asks for an assessment of the document's authenticity.\"\n    },\n    {\n      \"source\": 29,\n      \"target\": 30,\n      \"type\": \"information\",\n      \"reason\": \"Step 30 uses the lack of document access from step 29.\"\n    },\n    {\n      \"source\": 30,\n      \"target\": 31,\n      \"type\": \"tool_call\",\n      \"reason\": \"Step 31 is the coder's analysis in response to step 30.\"\n    },\n    {\n      \"source\": 31,\n      \"target\": 32,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 32 resets the browser after the coder's conclusion.\"\n    },\n    {\n      \"source\": 31,\n      \"target\": 33,\n      \"type\": \"plan\",\n      \"reason\": \"Step 33 updates the fact sheet based on step 31's analysis.\"\n    },\n    {\n      \"source\": 32,\n      \"target\": 34,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 34 resets the browser as instructed.\"\n    },\n    {\n      \"source\": 33,\n      \"target\": 35,\n      \"type\": \"plan\",\n      \"reason\": \"Step 35 updates the fact sheet with new evidence from step 33.\"\n    },\n    {\n      \"source\": 34,\n      \"target\": 36,\n      \"type\": \"tool_result\",\n      \"reason\": \"Step 36 resets the browser after step 34.\"\n    },\n    {\n      \"source\": 35,\n      \"target\": 36,\n      \"type\": \"plan\",\n      \"reason\": \"Step 36 delivers the final answer based on the updated plan.\"\n    }\n  ]\n}",
   "status": "success",
   "warnings": []
 }

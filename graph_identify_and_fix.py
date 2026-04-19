@@ -1,18 +1,24 @@
-"""Graph-aware error identification: find critical nodes, generate fixes, rerun agents.
+import numpy as np
+"""Error propagation graph: identify errors, build causal error graph, fix ALL, rerun.
 
-Phase 1: Identify ALL error nodes in each failed trajectory (LLM).
-Phase 2: Find critical nodes using graph — error nodes with no error-node ancestors.
-Phase 3: Generate fixes for each critical node (LLM replay).
-Phase 4: Rerun Magentic-One from after the last critical node with all fixes applied.
+Improved pipeline:
+- Phase 1: Identify ALL error nodes (LLM).
+- Phase 2: Build ERROR PROPAGATION GRAPH via pairwise counterfactual LLM calls.
+  Nodes = error steps only. Edges = "error at u caused error at v".
+  Find root causes = error nodes with no incoming DEPENDENT edges.
+  PARTIAL dependencies are also treated as root causes.
+- Phase 3: Fix ALL error steps (with ground truth steering).
+- Phase 4: Rerun from last error step.
+- Phase 5: Score results.
 """
 
 import argparse
 import asyncio
 import json
 import logging
+import threading
 import re
 import time
-from collections import defaultdict
 from pathlib import Path
 
 import httpx
@@ -26,11 +32,10 @@ log = logging.getLogger(__name__)
 # Defaults
 # ---------------------------------------------------------------------------
 DEFAULT_INPUT_DIR = "results/magentic_one/validation"
-DEFAULT_GRAPH_DIR = "graphs"
 DEFAULT_OUTPUT_DIR = "graph_error_analysis"
 DEFAULT_API_URL = "http://localhost:8000/v1/chat/completions"
-DEFAULT_MODEL = "QuantTrio/Qwen3-235B-A22B-Instruct-2507-AWQ"
-MAX_TOKENS = 131072
+DEFAULT_MODEL = "google/gemma-4-31b-it"
+MAX_TOKENS = 32768
 TEMPERATURE = 0
 MAX_RETRIES = 3
 BACKOFF_BASE = 2
@@ -38,6 +43,7 @@ STEP_TRUNCATE_LIMIT = 2000
 STEP_TRUNCATE_HEAD = 1000
 STEP_TRUNCATE_TAIL = 500
 DEFAULT_TIMEOUT = 300
+DEFAULT_MAX_TURNS = 50
 
 # ---------------------------------------------------------------------------
 # LLM utilities
@@ -183,36 +189,31 @@ def load_failed_trajectories(input_dir):
     return failed
 
 
-def load_graph(graph_dir, graph_problem_id):
-    path = Path(graph_dir) / f"{graph_problem_id}.json"
-    if not path.exists():
-        return None
-    return json.loads(path.read_text())
-
-
-def build_filename_to_graph_id(input_dir):
-    """Map trajectory filename -> graph problem_id (sorted order of all files)."""
-    all_files = sorted(f.name for f in Path(input_dir).glob("*.json") if f.stem != "summary")
-    return {name: f"problem_{i+1:02d}" for i, name in enumerate(all_files)}
-
-
 # ---------------------------------------------------------------------------
 # Phase 1: Identify ALL error nodes
 # ---------------------------------------------------------------------------
 
 PHASE1_SYSTEM = (
     "You are analyzing a multi-agent trajectory that produced the wrong answer. "
-    "Identify ALL steps that contain errors — not just the first one. "
-    "You do NOT know the correct answer. Return structured JSON only."
+    "You are given the CORRECT answer for reference so you can precisely identify "
+    "which steps caused the wrong answer. Identify ALL steps that contain errors — "
+    "not just the first one. Return structured JSON only."
 )
 
 PHASE1_USER = """\
-TASK: Identify ALL steps in this trajectory where an agent made an error.
+TASK: Identify ALL steps in this trajectory where an agent made an error that
+contributed to producing the wrong final answer.
 
 The agents were trying to answer this question:
 {query}
 
-The agents produced this answer: {final_answer}
+The agents produced this (WRONG) answer: {final_answer}
+
+THE CORRECT ANSWER IS: {ground_truth}
+
+Use the correct answer as a reference to determine where the agents went off track.
+A step is an error only if it contributed to the trajectory producing the wrong
+answer instead of the correct one.
 
 FULL TRAJECTORY:
 {trajectory}
@@ -241,11 +242,11 @@ All step values must be valid indices in [0, {max_step}].
 Output only the JSON object."""
 
 
-def run_phase1(trajectories, filename_to_graph_id, api_url, model):
+def run_phase1(trajectories, api_url, model):
     analyses = []
-    for traj in trajectories:
-        graph_id = filename_to_graph_id.get(traj["filename"], "?")
-        log.info("Phase 1: %s (%s)", graph_id, traj["instance_id"])
+    for idx, traj in enumerate(trajectories):
+        problem_id = f"problem_{idx + 1:02d}"
+        log.info("Phase 1: %s (%s)", problem_id, traj["instance_id"])
 
         trajectory_text = format_trajectory(traj["steps"], truncate=False)
         max_step = len(traj["steps"]) - 1
@@ -253,14 +254,15 @@ def run_phase1(trajectories, filename_to_graph_id, api_url, model):
         user_prompt = PHASE1_USER.format(
             query=traj["query"],
             final_answer=traj["final_answer"] or "(no answer produced)",
+            ground_truth=traj["ground_truth"],
             trajectory=trajectory_text,
             max_step=max_step,
         )
 
-        parsed, raw, usage = call_llm_with_retries(api_url, model, PHASE1_SYSTEM, user_prompt, graph_id)
+        parsed, raw, usage = call_llm_with_retries(api_url, model, PHASE1_SYSTEM, user_prompt, problem_id)
 
         entry = {
-            "graph_problem_id": graph_id,
+            "problem_id": problem_id,
             "instance_id": traj["instance_id"],
             "filename": traj["filename"],
             "query": traj["query"],
@@ -274,12 +276,10 @@ def run_phase1(trajectories, filename_to_graph_id, api_url, model):
         if parsed is None:
             entry["status"] = "failed"
             entry["error_nodes"] = []
-            log.error("%s: JSON parse failed", graph_id)
         else:
             raw_nodes = parsed.get("error_nodes", [])
             valid = [n for n in raw_nodes
                      if isinstance(n.get("step"), int) and 0 <= n["step"] <= max_step]
-            # Deduplicate by step index, keeping first occurrence
             seen_steps = set()
             deduped = []
             for n in valid:
@@ -288,7 +288,7 @@ def run_phase1(trajectories, filename_to_graph_id, api_url, model):
                     deduped.append(n)
             entry["error_nodes"] = deduped
             entry["status"] = "success"
-            log.info("  -> %d error nodes: %s", len(valid), [n["step"] for n in valid])
+            log.info("  -> %d error nodes: %s", len(deduped), [n["step"] for n in deduped])
 
         analyses.append(entry)
 
@@ -296,90 +296,266 @@ def run_phase1(trajectories, filename_to_graph_id, api_url, model):
 
 
 # ---------------------------------------------------------------------------
-# Phase 2: Find critical nodes using graph
+# Phase 2: Build error propagation graph + find root causes
 # ---------------------------------------------------------------------------
 
-def find_critical_nodes(graph_edges, error_steps):
-    """Find error nodes that have NO error-node ancestors in the graph.
+PROPAGATION_SYSTEM = (
+    "You are analyzing whether one error in a multi-agent trajectory "
+    "caused another error. Answer with structured JSON only."
+)
 
-    An error node is "critical" if no path from the root reaches it through
-    another error node. Descendants of critical nodes are skipped.
+PROPAGATION_USER = """\
+CONTEXT: A multi-agent team was trying to answer this question:
+{query}
+
+The trajectory PRODUCED THIS WRONG ANSWER: {wrong_final_answer}
+THE CORRECT ANSWER IS: {ground_truth}
+
+Here is the relevant portion of the trajectory between these two error steps:
+{context_steps}
+
+ERROR AT STEP {step_u} ({agent_u}, {type_u}):
+{desc_u}
+
+ERROR AT STEP {step_v} ({agent_v}, {type_v}):
+{desc_v}
+
+QUESTION: If step {step_u} had been executed CORRECTLY, would the error
+at step {step_v} still have occurred?
+
+Answer with a JSON object:
+{{
+  "relationship": "<INDEPENDENT|DEPENDENT|PARTIAL>",
+  "reason": "<one sentence explanation>"
+}}
+
+- INDEPENDENT: The error at step {step_v} would still occur even if step {step_u}
+  were correct. They are caused by different underlying issues.
+- DEPENDENT: The error at step {step_v} was caused by or made inevitable by
+  the error at step {step_u}. Fixing step {step_u} would likely prevent step {step_v}'s error.
+- PARTIAL: The error at step {step_u} contributed to step {step_v}'s error, but
+  step {step_v} also has its own independent issues.
+
+Output only the JSON object."""
+
+
+def find_root_causes(error_steps, dependent_edges, partial_edges):
+    """Find root causes of the error propagation DAG.
+
+    Root causes = error nodes with no incoming DEPENDENT edges.
+    Nodes with only PARTIAL incoming edges are also root causes
+    (they have their own independent issues).
+    """
+    has_full_parent = set()
+    for u, v in dependent_edges:
+        has_full_parent.add(v)
+
+    root_causes = [n for n in error_steps if n not in has_full_parent]
+
+    # Partial dependencies are ALSO root causes (they have independent issues)
+    for u, v in partial_edges:
+        if v not in root_causes:
+            root_causes.append(v)
+
+    return sorted(root_causes)
+
+
+def build_error_clusters(error_steps, dependent_edges, partial_edges):
+    """Group errors into clusters based on DEPENDENT edges.
+
+    Each cluster is a connected component in the DEPENDENT-edge subgraph.
+    The root cause of each cluster is the node with no incoming DEPENDENT edge.
     """
     if not error_steps:
         return []
 
-    error_set = set(error_steps)
+    # Build adjacency for DEPENDENT edges only
+    children = {}
+    parents = {}
+    for s in error_steps:
+        children[s] = []
+        parents[s] = []
+    for u, v in dependent_edges:
+        if u in children and v in parents:
+            children[u].append(v)
+            parents[v].append(u)
 
-    # Build reverse adjacency (predecessors)
-    predecessors = defaultdict(set)
-    for e in graph_edges:
-        predecessors[e["target"]].add(e["source"])
-
-    def has_error_ancestor(node, visited=None):
-        """Check if any ancestor of node is in error_set."""
-        if visited is None:
-            visited = set()
-        for pred in predecessors.get(node, []):
-            if pred in visited:
-                continue
-            visited.add(pred)
-            if pred in error_set:
-                return True
-            if has_error_ancestor(pred, visited):
-                return True
-        return False
-
-    critical = []
+    # Find connected components via BFS on undirected DEPENDENT edges
+    visited = set()
+    clusters = []
     for step in sorted(error_steps):
-        if not has_error_ancestor(step):
-            critical.append(step)
+        if step in visited:
+            continue
+        # BFS
+        component = []
+        queue = [step]
+        while queue:
+            node = queue.pop(0)
+            if node in visited:
+                continue
+            visited.add(node)
+            component.append(node)
+            for child in children.get(node, []):
+                if child not in visited:
+                    queue.append(child)
+            for parent in parents.get(node, []):
+                if parent not in visited:
+                    queue.append(parent)
 
-    return critical
+        component.sort()
+        # Root of this cluster = nodes with no DEPENDENT parent within the cluster
+        component_set = set(component)
+        roots = [s for s in component if not any(p in component_set for p in parents.get(s, []))]
+        root = roots[0] if roots else component[0]
+
+        clusters.append({
+            "cluster_id": len(clusters) + 1,
+            "root_cause_step": root,
+            "error_steps": component,
+        })
+
+    return clusters
 
 
-def run_phase2(phase1_data, graph_dir):
+def run_phase2(phase1_data, trajectories, api_url, model):
+    """Build error propagation graph via pairwise counterfactual LLM calls."""
+    traj_by_id = {t["instance_id"]: t for t in trajectories}
     results = []
+
     for analysis in phase1_data["analyses"]:
-        graph_id = analysis["graph_problem_id"]
+        problem_id = analysis["problem_id"]
+        instance_id = analysis["instance_id"]
         error_nodes = analysis.get("error_nodes", [])
         error_steps = [n["step"] for n in error_nodes]
 
-        graph = load_graph(graph_dir, graph_id)
-        if graph is None:
-            log.error("%s: graph not found", graph_id)
+        if not error_nodes:
             results.append({
-                "graph_problem_id": graph_id,
-                "instance_id": analysis["instance_id"],
-                "status": "failed", "error": "graph_not_found",
+                "problem_id": problem_id,
+                "instance_id": instance_id,
+                "filename": analysis["filename"],
+                "all_error_steps": [],
+                "error_graph": {"nodes": [], "edges": []},
+                "clusters": [],
+                "critical_nodes": [],
+                "critical_steps": [],
+                "last_error_step": None,
+                "status": "no_errors",
             })
+            log.info("%s: 0 errors -> no graph", problem_id)
             continue
 
-        critical = find_critical_nodes(graph["edges"], error_steps)
+        # Single error — trivially its own root cause
+        if len(error_nodes) == 1:
+            results.append({
+                "problem_id": problem_id,
+                "instance_id": instance_id,
+                "filename": analysis["filename"],
+                "all_error_steps": error_steps,
+                "error_graph": {
+                    "nodes": error_steps,
+                    "edges": [],
+                },
+                "clusters": [{
+                    "cluster_id": 1,
+                    "root_cause_step": error_steps[0],
+                    "error_steps": error_steps,
+                }],
+                "critical_nodes": [error_nodes[0]],
+                "critical_steps": error_steps,
+                "last_error_step": error_steps[0],
+                "status": "success",
+            })
+            log.info("%s: 1 error -> 1 root cause: %s", problem_id, error_steps)
+            continue
 
-        # Map critical step indices back to error node details
+        traj = traj_by_id[instance_id]
         error_by_step = {n["step"]: n for n in error_nodes}
-        critical_details = [error_by_step[s] for s in critical]
 
-        last_critical = max(critical) if critical else None
+        # Build pairwise error propagation graph
+        edges = []  # {"source", "target", "relationship", "reason"}
+        num_pairs = len(error_nodes) * (len(error_nodes) - 1) // 2
+        log.info("Phase 2: %s — %d errors, %d pairwise comparisons",
+                 problem_id, len(error_nodes), num_pairs)
+
+        for i, node_u in enumerate(error_nodes):
+            for node_v in error_nodes[i + 1:]:
+                step_u = node_u["step"]
+                step_v = node_v["step"]
+
+                # Build context: steps between u and v (inclusive)
+                context_steps_list = [s for s in traj["steps"]
+                                      if step_u <= s["step"] <= step_v]
+                context_text = format_trajectory(context_steps_list, truncate=False)
+
+                user_prompt = PROPAGATION_USER.format(
+                    query=analysis["query"],
+                    wrong_final_answer=analysis.get("original_answer") or "(no answer produced)",
+                    ground_truth=analysis.get("ground_truth", ""),
+                    context_steps=context_text,
+                    step_u=step_u, agent_u=node_u["agent"], type_u=node_u["error_type"],
+                    desc_u=node_u["what_went_wrong"],
+                    step_v=step_v, agent_v=node_v["agent"], type_v=node_v["error_type"],
+                    desc_v=node_v["what_went_wrong"],
+                )
+
+                parsed, raw, usage = call_llm_with_retries(
+                    api_url, model, PROPAGATION_SYSTEM, user_prompt,
+                    f"{problem_id}_pair_{step_u}_{step_v}",
+                )
+
+                if parsed and "relationship" in parsed:
+                    rel = parsed["relationship"].upper()
+                    reason = parsed.get("reason", "")
+                else:
+                    rel = "INDEPENDENT"
+                    reason = "LLM call failed, defaulting to independent"
+
+                if rel in ("DEPENDENT", "PARTIAL"):
+                    edges.append({
+                        "source": step_u,
+                        "target": step_v,
+                        "relationship": rel,
+                        "reason": reason,
+                    })
+                    log.info("  %d -> %d: %s (%s)", step_u, step_v, rel, reason[:60])
+
+        # Separate edges by type
+        dependent_edges = [(e["source"], e["target"]) for e in edges if e["relationship"] == "DEPENDENT"]
+        partial_edges = [(e["source"], e["target"]) for e in edges if e["relationship"] == "PARTIAL"]
+
+        # Find root causes
+        root_causes = find_root_causes(error_steps, dependent_edges, partial_edges)
+
+        # Build clusters
+        clusters = build_error_clusters(error_steps, dependent_edges, partial_edges)
+
+        critical_details = [error_by_step[s] for s in root_causes if s in error_by_step]
+        last_error = max(error_steps)
 
         results.append({
-            "graph_problem_id": graph_id,
-            "instance_id": analysis["instance_id"],
+            "problem_id": problem_id,
+            "instance_id": instance_id,
             "filename": analysis["filename"],
             "all_error_steps": error_steps,
+            "error_graph": {
+                "nodes": error_steps,
+                "edges": edges,
+            },
+            "clusters": clusters,
             "critical_nodes": critical_details,
-            "critical_steps": critical,
-            "last_critical_step": last_critical,
+            "critical_steps": root_causes,
+            "last_error_step": last_error,
             "status": "success",
         })
-        log.info("%s: %d errors -> %d critical nodes: %s (last=%s)",
-                 graph_id, len(error_steps), len(critical), critical, last_critical)
+        log.info("%s: %d errors, %d edges (%d dep, %d partial) -> %d root causes: %s, %d clusters",
+                 problem_id, len(error_steps), len(edges), len(dependent_edges),
+                 len(partial_edges), len(root_causes), root_causes, len(clusters))
 
     return {"results": results}
 
 
 # ---------------------------------------------------------------------------
-# Phase 3: Generate fixes for each critical node
+# Phase 3: Generate fixes for ALL error steps (with ground truth)
 # ---------------------------------------------------------------------------
 
 FIX_SYSTEM = "You are {agent_name}. {agent_system_prompt}"
@@ -394,51 +570,75 @@ YOUR PREVIOUS RESPONSE AT THIS STEP WAS:
 THIS RESPONSE WAS WRONG BECAUSE:
 {what_went_wrong}
 
-Produce a corrected response. Requirements:
-- Fix ONLY the specific mistake described above.
-- Match the EXACT style and length of the original response shown above.
+THE WRONG FINAL ANSWER THE TRAJECTORY PRODUCED: {wrong_final_answer}
+THE CORRECT FINAL ANSWER IS: {ground_truth}
+
+Produce a corrected response. You are acting AS the agent at this step.
+You must stay in character and produce ONLY what this agent would output
+if it had performed correctly.
+
+CRITICAL RULES:
+- You are {agent_name}. You can ONLY perform actions available to your role:
+  * Orchestrator: delegate tasks to other agents (1-3 sentences).
+  * WebSurfer: perform ONE web action (visit_url, web_search, click, etc.).
+  * Coder: write a code block for the Executor to run.
+  * FileSurfer: perform ONE file operation.
+  * Executor: return execution output.
+- IMPORTANT: Do NOT include the final answer directly in your response.
+  Your correction should fix the PROCESS (plan, action, query, click, search query, tool call,
+  reasoning step) so that subsequent steps can arrive at the correct
+  answer naturally. The agent at this step would not know the final answer.
+- Do NOT derive, compute, or state the final answer in this step.
+- Do NOT include information that this agent could not have known at this
+  point in the conversation. Use only information available in the
+  conversation so far.
+- Do NOT skip ahead — do not compress multiple agent actions into one step.
+  Produce exactly ONE action that this agent would take.
+- Match the EXACT style and length of the original response.
   If the original was {original_length} characters, your correction should be
   similar in length — not longer.
-- Do NOT add explanations, reasoning, or analysis that the agent would not
-  have produced. Just output the corrected agent response, nothing else.
-- For Orchestrator: short delegation instructions (1-3 sentences).
-- For WebSurfer: a tool call like visit_url(...) or web_search(...).
-- For Coder: a code block.
-- For FileSurfer: a file operation or extracted content summary.
-Output ONLY the corrected response, no preamble."""
+Output ONLY the corrected agent response, no preamble."""
 
 
-def run_phase3(trajectories, phase2_data, api_url, model):
+def run_phase3(trajectories, phase1_data, phase2_data, api_url, model):
+    """Generate fixes for ALL error steps, not just critical nodes."""
     traj_by_id = {t["instance_id"]: t for t in trajectories}
+    analysis_by_id = {a["instance_id"]: a for a in phase1_data["analyses"]}
     fixes = []
 
     for result in phase2_data["results"]:
-        if result.get("status") != "success" or not result.get("critical_nodes"):
+        if result.get("status") != "success" or not result.get("all_error_steps"):
             fixes.append({
-                "graph_problem_id": result["graph_problem_id"],
+                "problem_id": result["problem_id"],
                 "instance_id": result["instance_id"],
-                "fixes": [],
-                "status": "skipped",
+                "fixes": [], "status": "skipped",
             })
             continue
 
-        graph_id = result["graph_problem_id"]
+        problem_id = result["problem_id"]
         instance_id = result["instance_id"]
         traj = traj_by_id[instance_id]
+        analysis = analysis_by_id[instance_id]
         steps = traj["steps"]
+        ground_truth = traj["ground_truth"]
 
-        # Track fixes so later critical nodes see earlier fixes applied
-        applied_fixes = {}  # step -> corrected_content
+        error_by_step = {n["step"]: n for n in analysis.get("error_nodes", [])}
+        # Only fix critical nodes (root causes from error propagation graph)
+        critical_steps = sorted(result.get("critical_steps", []))
 
+        applied_fixes = {}
         node_fixes = []
-        for node in result["critical_nodes"]:
-            step_idx = node["step"]
+
+        for step_idx in critical_steps:
+            node = error_by_step.get(step_idx)
+            if node is None:
+                continue
+
             agent = node["agent"]
-            log.info("Phase 3: %s step %d (%s)", graph_id, step_idx, agent)
+            log.info("Phase 3: %s step %d (%s)", problem_id, step_idx, agent)
 
             agent_system_prompt = traj["agent_prompts"].get(agent, "")
 
-            # Build prior context with earlier critical node fixes applied
             prior_steps = []
             for s in steps:
                 if s["step"] >= step_idx:
@@ -457,10 +657,12 @@ def run_phase3(trajectories, phase2_data, api_url, model):
                 prior_context=prior_context,
                 original_content=original_content,
                 what_went_wrong=node["what_went_wrong"],
+                wrong_final_answer=traj.get("final_answer") or "(no answer produced)",
+                ground_truth=ground_truth,
+                agent_name=agent,
                 original_length=len(step_data["content"]),
             )
 
-            # Cap output tokens proportional to original content length
             fix_max_tokens = min(MAX_TOKENS, max(512, len(step_data["content"]) * 2))
 
             try:
@@ -471,14 +673,12 @@ def run_phase3(trajectories, phase2_data, api_url, model):
                 corrected = raw_fix.strip()
                 applied_fixes[step_idx] = corrected
                 node_fixes.append({
-                    "step": step_idx,
-                    "agent": agent,
+                    "step": step_idx, "agent": agent,
                     "error_type": node["error_type"],
                     "what_went_wrong": node["what_went_wrong"],
                     "corrected_content": corrected,
                     "latency_seconds": round(latency, 2),
-                    **usage,
-                    "status": "success",
+                    **usage, "status": "success",
                 })
                 log.info("  -> fix generated (%d chars)", len(corrected))
             except Exception as e:
@@ -489,28 +689,25 @@ def run_phase3(trajectories, phase2_data, api_url, model):
                 })
 
         fixes.append({
-            "graph_problem_id": graph_id,
+            "problem_id": problem_id,
             "instance_id": instance_id,
-            "fixes": node_fixes,
-            "status": "success",
+            "fixes": node_fixes, "status": "success",
         })
 
     return {"all_fixes": fixes}
 
 
 # ---------------------------------------------------------------------------
-# Phase 4: Rerun with Magentic-One
+# Phase 4: Rerun with Magentic-One (resume from last error step)
 # ---------------------------------------------------------------------------
 
-def _build_history_messages(steps, critical_fixes, last_critical_step):
-    """Build TextMessage list: steps 0..last_critical_step with all critical
-    nodes' content replaced by their fixes."""
+def _build_history_messages(steps, all_fixes, last_error_step):
+    """Build history with ALL fixes applied, up to the last error step."""
     from autogen_agentchat.messages import TextMessage as AutogenTextMessage
-
-    fix_map = {f["step"]: f["corrected_content"] for f in critical_fixes if f.get("status") == "success"}
+    fix_map = {f["step"]: f["corrected_content"] for f in all_fixes if f.get("status") == "success"}
     messages = []
     for s in steps:
-        if s["step"] > last_critical_step:
+        if s["step"] > last_error_step:
             break
         content = fix_map.get(s["step"], s["content"])
         messages.append(AutogenTextMessage(content=content, source=s["agent"]))
@@ -519,7 +716,7 @@ def _build_history_messages(steps, critical_fixes, last_critical_step):
 
 async def _rerun_single(task, history_messages, runner, writer, problem_id="unknown"):
     from runners.magentic_one_runner import MessageLogger, AgentEventHandler, _parse_args
-    from autogen_agentchat.agents import CodeExecutorAgent
+    from autogen_agentchat.agents import AssistantAgent, CodeExecutorAgent
     from autogen_agentchat.messages import (
         ToolCallExecutionEvent, ToolCallRequestEvent,
         ToolCallSummaryMessage, TextMessage, ThoughtEvent,
@@ -536,14 +733,33 @@ async def _rerun_single(task, history_messages, runner, writer, problem_id="unkn
 
     web_surfer = MultimodalWebSurfer("WebSurfer", model_client=runner.client, headless=True)
     file_surfer = FileSurfer("FileSurfer", model_client=runner.client)
-    coder = MagenticOneCoderAgent("Coder", model_client=runner.client)
+    coder = AssistantAgent(
+        "Coder",
+        model_client=runner.client,
+        system_message=(
+            "You are a helpful AI assistant.\n"
+            "Solve tasks using your coding and language skills.\n"
+            "When you need to write code, you MUST use a markdown code block with the language tag.\n"
+            "For Python, use:\n```python\nprint('hello')\n```\n"
+            "For shell, use:\n```sh\necho hello\n```\n"
+            "NEVER use tool call syntax like call:executor or <|tool_call>. "
+            "ALWAYS wrap code in ```python or ```sh blocks. "
+            "The Executor agent will run your code blocks automatically.\n"
+            "Don't include multiple code blocks in one response. "
+            "Use 'print' for output. Check execution results and fix errors if needed."
+        ),
+        description=(
+            "A helpful and general-purpose AI assistant that has strong language skills, "
+            "Python skills, and Linux command line skills."
+        ),
+    )
     work_dir = Path(tempfile.mkdtemp(prefix=f"grerun_{task_id[:8]}_"))
     code_executor = LocalCommandLineCodeExecutor(work_dir=work_dir)
     executor = CodeExecutorAgent("Executor", code_executor=code_executor)
 
     team = MagenticOneGroupChat(
         participants=[web_surfer, file_surfer, coder, executor],
-        model_client=runner.client, max_turns=100,
+        model_client=runner.client, max_turns=DEFAULT_MAX_TURNS,
     )
 
     core_logger = logging.getLogger("autogen_core")
@@ -575,7 +791,17 @@ async def _rerun_single(task, history_messages, runner, writer, problem_id="unkn
                 c = event.content if isinstance(event.content, str) else str(event.content)
                 writer.add_step(agent=agent_name, content=c)
             elif isinstance(event, TextMessage):
-                writer.add_step(agent=agent_name, content=event.content)
+                tc_parsed = []
+                if agent_name == "WebSurfer":
+                    tc_match = re.match(r'^(\w+)\(\s*(\{.*\})\s*\)$', event.content.strip(), re.DOTALL)
+                    if tc_match:
+                        try:
+                            tc_parsed = [{"tool": tc_match.group(1),
+                                          "arguments": json.loads(tc_match.group(2))}]
+                        except json.JSONDecodeError:
+                            pass
+                writer.add_step(agent=agent_name, content=event.content,
+                                tool_calls=tc_parsed or None)
             elif isinstance(event, ThoughtEvent):
                 pass
             elif hasattr(event, "messages"):
@@ -610,14 +836,26 @@ async def _run_phase4_async(trajectories, phase2_data, phase3_data,
     fixes_by_id = {f["instance_id"]: f for f in phase3_data["all_fixes"]}
 
     data_dir = Path("dataset/gaia")
+    tasks_list = []
     tasks_by_id = {}
     for line in (data_dir / "validation.jsonl").read_text().splitlines():
         task = json.loads(line)
+        tasks_list.append(task)
         tasks_by_id[task["task_id"]] = task
 
     file_to_task_id = {}
     for t in trajectories:
-        file_to_task_id[t["instance_id"]] = t["filename"].replace(".json", "")
+        iid = t["instance_id"]
+        stem = t["filename"].replace(".json", "")
+        if stem in tasks_by_id:
+            file_to_task_id[iid] = stem
+        else:
+            import re as _re
+            m = _re.search(r"(\d+)$", iid)
+            if m:
+                idx = int(m.group(1))
+                if 0 <= idx < len(tasks_list):
+                    file_to_task_id[iid] = tasks_list[idx]["task_id"]
 
     runner = MagenticOneRunner(
         data_dir=str(data_dir), output_dir=str(output_dir / "reruns"), model=model,
@@ -629,19 +867,41 @@ async def _run_phase4_async(trajectories, phase2_data, phase3_data,
 
     for result in phase2_data["results"]:
         instance_id = result["instance_id"]
-        graph_id = result["graph_problem_id"]
+        problem_id = result["problem_id"]
         fix_data = fixes_by_id.get(instance_id, {})
 
-        if result.get("status") != "success" or not result.get("critical_steps"):
+        # Use original problem number from instance_id suffix (e.g., "gaia_validation_0002" -> 2)
+        import re as _re
+        _m = _re.search(r"(\d+)$", instance_id)
+        orig_num = int(_m.group(1)) if _m else int(problem_id.split('_')[1])
+
+        # Skip if rerun output already exists
+        rerun_file = rerun_dir / f"problem_{orig_num:02d}.json"
+        if rerun_file.exists():
+            log.info("Phase 4: %s — skipping (rerun file exists)", problem_id)
             simulations.append({
-                "graph_problem_id": graph_id, "instance_id": instance_id,
-                "status": "skipped", "reason": "no critical nodes",
+                "problem_id": problem_id, "instance_id": instance_id,
+                "status": "skipped", "reason": "rerun file exists",
+            })
+            continue
+
+        if result.get("status") != "success" or not result.get("all_error_steps"):
+            simulations.append({
+                "problem_id": problem_id, "instance_id": instance_id,
+                "status": "skipped", "reason": "no errors found",
+            })
+            continue
+
+        if not result.get("critical_steps"):
+            simulations.append({
+                "problem_id": problem_id, "instance_id": instance_id,
+                "status": "skipped", "reason": "no root nodes",
             })
             continue
 
         if fix_data.get("status") != "success":
             simulations.append({
-                "graph_problem_id": graph_id, "instance_id": instance_id,
+                "problem_id": problem_id, "instance_id": instance_id,
                 "status": "skipped", "reason": "fixes failed",
             })
             continue
@@ -651,37 +911,51 @@ async def _run_phase4_async(trajectories, phase2_data, phase3_data,
         task = tasks_by_id.get(task_id)
         if task is None:
             simulations.append({
-                "graph_problem_id": graph_id, "instance_id": instance_id,
+                "problem_id": problem_id, "instance_id": instance_id,
                 "status": "failed", "error": "task_not_found",
             })
             continue
 
-        last_critical = result["last_critical_step"]
-        critical_fixes = fix_data["fixes"]
+        # Resume from last critical step (root cause), not last error step
+        last_critical = max(result.get("critical_steps", [])) if result.get("critical_steps") else result["last_error_step"]
+        all_fixes = fix_data["fixes"]
 
-        history_messages = _build_history_messages(traj["steps"], critical_fixes, last_critical)
+        history_messages = _build_history_messages(traj["steps"], all_fixes, last_critical)
+        num_fixes = sum(1 for f in all_fixes if f.get("status") == "success")
         log.info("Phase 4: %s — %d history messages (up to step %d, %d fixes applied)",
-                 graph_id, len(history_messages), last_critical, len(critical_fixes))
+                 problem_id, len(history_messages), last_critical, num_fixes)
 
         writer = TrajectoryWriter(
             task=task, framework="magentic-one-graph-rerun", model=model,
             output_dir=str(rerun_dir), instance_id=instance_id + "_graph_rerun",
-            problem_number=int(graph_id.split("_")[1]), agents=AGENT_DEFINITIONS,
+            problem_number=orig_num, agents=AGENT_DEFINITIONS,
         )
-        live_log_dir = Path("logs") / "graph_reruns"
-        writer.enable_live_log(live_log_dir / f"{task_id}.json")
+        writer.enable_live_log()
 
         entry = {
-            "graph_problem_id": graph_id, "instance_id": instance_id,
+            "problem_id": problem_id, "instance_id": instance_id,
+            "all_error_steps": result["all_error_steps"],
             "critical_steps": result["critical_steps"],
             "last_critical_step": last_critical,
+            "num_fixes_applied": num_fixes,
+            "num_clusters": len(result.get("clusters", [])),
         }
 
         try:
             t0 = time.time()
-            final_answer = await asyncio.wait_for(
-                _rerun_single(task, history_messages, runner, writer, problem_id=graph_id), timeout=timeout,
+            rerun_task = asyncio.ensure_future(
+                _rerun_single(task, history_messages, runner, writer, problem_id=problem_id),
             )
+            loop = asyncio.get_event_loop()
+            watchdog = threading.Timer(
+                timeout,
+                lambda: loop.call_soon_threadsafe(rerun_task.cancel),
+            )
+            watchdog.start()
+            try:
+                final_answer = await rerun_task
+            finally:
+                watchdog.cancel()
             latency = time.time() - t0
             writer.finalize(final_answer=final_answer)
             entry.update({
@@ -690,7 +964,7 @@ async def _run_phase4_async(trajectories, phase2_data, phase3_data,
                 "status": "success",
             })
             log.info("  -> rerun answer: %s (%.1fs)", final_answer, latency)
-        except asyncio.TimeoutError:
+        except (asyncio.TimeoutError, asyncio.CancelledError):
             writer.finalize(error="Timeout")
             entry.update({"status": "failed", "error": "timeout"})
             log.error("  -> timed out after %ds", timeout)
@@ -712,7 +986,7 @@ def run_phase4(trajectories, phase2_data, phase3_data, output_dir, model, timeou
 
 
 # ---------------------------------------------------------------------------
-# Scoring and text reports
+# Phase 5: Scoring and text reports
 # ---------------------------------------------------------------------------
 
 def run_scoring(phase1_data, phase2_data, phase3_data, phase4_data, output_dir):
@@ -729,7 +1003,7 @@ def run_scoring(phase1_data, phase2_data, phase3_data, phase4_data, output_dir):
         critical = critical_by_id.get(instance_id, {})
         fix_data = fixes_by_id.get(instance_id, {})
         sim = sim_by_id.get(instance_id, {})
-        graph_id = analysis["graph_problem_id"]
+        problem_id = analysis["problem_id"]
 
         ground_truth = analysis["ground_truth"]
         original_answer = analysis.get("original_answer")
@@ -743,7 +1017,7 @@ def run_scoring(phase1_data, phase2_data, phase3_data, phase4_data, output_dir):
         total += 1
 
         result = {
-            "graph_problem_id": graph_id,
+            "problem_id": problem_id,
             "instance_id": instance_id,
             "ground_truth": ground_truth,
             "original_answer": original_answer,
@@ -752,33 +1026,37 @@ def run_scoring(phase1_data, phase2_data, phase3_data, phase4_data, output_dir):
             "rerun_correct": rerun_correct,
             "flipped_to_correct": is_flipped,
             "all_error_steps": [n["step"] for n in analysis.get("error_nodes", [])],
+            "error_graph_edges": critical.get("error_graph", {}).get("edges", []),
+            "clusters": critical.get("clusters", []),
             "critical_steps": critical.get("critical_steps", []),
-            "last_critical_step": critical.get("last_critical_step"),
+            "last_error_step": critical.get("last_error_step"),
+            "num_fixes_applied": sim.get("num_fixes_applied", 0),
         }
         results.append(result)
-
-        # Write text report
         write_report(result, analysis, critical, fix_data, sim, output_dir)
 
+    original_correct_total = sum(1 for r in results if r["original_correct"])
     summary = {
         "total_failures_analyzed": total,
         "flipped_to_correct": flipped,
         "remained_wrong": total - flipped,
-        "original_correct_total": 3,
-        "projected_total_correct": 3 + flipped,
-        "projected_total_accuracy": round((3 + flipped) / 10, 2),
+        "original_correct_total": original_correct_total,
+        "projected_total_correct": original_correct_total + flipped,
+        "projected_total_accuracy": round(
+            (original_correct_total + flipped) / max(total + original_correct_total, 1), 2
+        ),
     }
     return {"results": results, "summary": summary}
 
 
 def write_report(result, analysis, critical, fix_data, sim, output_dir):
-    graph_id = result["graph_problem_id"]
+    problem_id = result["problem_id"]
     query = analysis.get("query", "")
     query_display = query[:200] + ("..." if len(query) > 200 else "")
 
     lines = [
         f"{'=' * 70}",
-        f"  {graph_id.upper()} — {result['instance_id']}",
+        f"  {problem_id.upper()} — {result['instance_id']}",
         f"{'=' * 70}",
         "",
         "PROBLEM INFO",
@@ -787,26 +1065,36 @@ def write_report(result, analysis, critical, fix_data, sim, output_dir):
         f"  Original Answer: {result['original_answer']}",
         f"  Original Correct: {result['original_correct']}",
         "",
-        f"ALL ERROR NODES: {result['all_error_steps']}",
-        f"CRITICAL NODES:  {result['critical_steps']}",
-        f"LAST CRITICAL:   {result.get('last_critical_step', 'N/A')}",
+        f"ALL ERROR STEPS:   {result['all_error_steps']}",
+        f"ROOT CAUSES:       {result['critical_steps']}",
+        f"LAST ERROR STEP:   {result.get('last_error_step', 'N/A')}",
+        f"FIXES APPLIED:     {result.get('num_fixes_applied', 0)}",
         "",
     ]
 
-    # Detail each critical node and its fix
-    for node in critical.get("critical_nodes", []):
-        step = node["step"]
-        lines.append(f"--- Critical Node: Step {step} ({node['agent']}) ---")
-        lines.append(f"  Error Type:      {node['error_type']}")
-        lines.append(f"  What went wrong: {node['what_went_wrong']}")
-        fix = next((f for f in fix_data.get("fixes", []) if f.get("step") == step), None)
-        if fix and fix.get("status") == "success":
-            corrected = fix["corrected_content"]
-            if len(corrected) > 500:
-                corrected = corrected[:400] + "\n  ...[truncated]..."
-            lines.append(f"  Fix:")
-            lines.append("    " + "\n    ".join(corrected.split("\n")))
+    # Show error propagation graph edges
+    edges = result.get("error_graph_edges", [])
+    if edges:
+        lines.append("ERROR PROPAGATION GRAPH:")
+        for e in edges:
+            lines.append(f"  {e['source']} -> {e['target']} [{e['relationship']}]: {e.get('reason', '')[:100]}")
         lines.append("")
+
+    # Show clusters
+    for cluster in result.get("clusters", []):
+        lines.append(f"--- Cluster {cluster['cluster_id']} (root: step {cluster['root_cause_step']}) ---")
+        lines.append(f"  Steps: {cluster['error_steps']}")
+        lines.append("")
+
+    # Show fixes
+    lines.append("FIXES:")
+    for fix in fix_data.get("fixes", []):
+        step = fix.get("step", "?")
+        etype = fix.get("error_type", "?")
+        status = fix.get("status", "?")
+        wrong = fix.get("what_went_wrong", "")
+        lines.append(f"  Step {step} ({etype}) [{status}]: {wrong[:150]}")
+    lines.append("")
 
     lines.extend([
         "RERUN RESULT",
@@ -816,7 +1104,7 @@ def write_report(result, analysis, critical, fix_data, sim, output_dir):
         "",
     ])
 
-    txt_path = output_dir / f"{graph_id}.txt"
+    txt_path = output_dir / f"{problem_id}.txt"
     txt_path.write_text("\n".join(lines), encoding="utf-8")
     log.info("  Written: %s", txt_path)
 
@@ -825,15 +1113,61 @@ def write_report(result, analysis, critical, fix_data, sim, output_dir):
 # Entry point
 # ---------------------------------------------------------------------------
 
+
+def select_fix_targets(trajectory, critical_nodes, fix_target, instance_id, trial_idx=0):
+    """
+    Implements the target selection logic for the Wrong-Fix Robustness Experiment.
+    """
+    # For reproducibility: seed based on instance, condition, and trial
+    seed = hash((instance_id, fix_target, trial_idx))
+    np.random.seed(seed)
+    
+    all_steps = list(range(len(trajectory)))
+    error_steps = [i for i, step in enumerate(trajectory) if step.get('is_error', False)]
+    non_error_steps = [i for i, step in enumerate(trajectory) if not step.get('is_error', False)]
+    
+    if fix_target == 'critical': # C2
+        return critical_nodes
+    
+    elif fix_target == 'random_error': # C3
+        eligible = [s for s in error_steps if s not in critical_nodes]
+        return [np.random.choice(eligible)] if eligible else []
+        
+    elif fix_target == 'random_nonerror': # C4
+        eligible = [s for s in non_error_steps if s not in critical_nodes]
+        return [np.random.choice(eligible)] if eligible else []
+        
+    elif fix_target == 'adjacent': # C5
+        if not critical_nodes: return []
+        crit = critical_nodes[0] # Base on first critical node
+        eligible = [s for s in [crit-1, crit+1] if 0 <= s < len(trajectory) and s not in critical_nodes]
+        return [np.random.choice(eligible)] if eligible else []
+        
+    elif fix_target == 'all_errors': # C7
+        return error_steps
+        
+    elif fix_target == 'none': # C0
+        return []
+        
+    elif fix_target == 'empty': # C6
+        return critical_nodes
+        
+    return critical_nodes
 def main():
-    parser = argparse.ArgumentParser(description="Graph-aware error identification and fix")
+    parser = argparse.ArgumentParser(
+        description="Error propagation graph: identify errors, build causal graph, fix all, rerun"
+    )
     parser.add_argument("--input-dir", default=DEFAULT_INPUT_DIR)
-    parser.add_argument("--graph-dir", default=DEFAULT_GRAPH_DIR)
     parser.add_argument("--output-dir", default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--api-url", default=DEFAULT_API_URL)
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--timeout", type=int, default=DEFAULT_TIMEOUT)
     parser.add_argument("--phase", type=int, choices=[1, 2, 3, 4, 5], default=None)
+    parser.add_argument('--fix-target', 
+                    type=str, 
+                    choices=['critical', 'random_error', 'random_nonerror', 'adjacent', 'empty', 'all_errors', 'none'], 
+                    default='critical', 
+                    help='Target for the fix experiment (C0-C7)')
     args = parser.parse_args()
 
     input_dir = Path(args.input_dir)
@@ -841,44 +1175,39 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
 
     p1_path = output_dir / "step1_all_errors.json"
-    p2_path = output_dir / "step2_critical_nodes.json"
+    p2_path = output_dir / "step2_error_graph.json"
     p3_path = output_dir / "step3_fixes.json"
     p4_path = output_dir / "step4_reruns.json"
     p5_path = output_dir / "step5_results.json"
 
     trajectories = load_failed_trajectories(input_dir)
-    filename_to_graph_id = build_filename_to_graph_id(args.input_dir)
     log.info("Loaded %d failed trajectories", len(trajectories))
 
-    # Phase 1
     if args.phase is None or args.phase == 1:
         log.info("=== PHASE 1: Identify ALL error nodes ===")
-        p1 = run_phase1(trajectories, filename_to_graph_id, args.api_url, args.model)
+        p1 = run_phase1(trajectories, args.api_url, args.model)
         p1_path.write_text(json.dumps(p1, indent=2, ensure_ascii=False))
 
-    # Phase 2
     if args.phase is None or args.phase == 2:
         p1 = json.loads(p1_path.read_text())
-        log.info("=== PHASE 2: Find critical nodes ===")
-        p2 = run_phase2(p1, args.graph_dir)
+        log.info("=== PHASE 2: Build error propagation graph ===")
+        p2 = run_phase2(p1, trajectories, args.api_url, args.model)
         p2_path.write_text(json.dumps(p2, indent=2, ensure_ascii=False))
 
-    # Phase 3
     if args.phase is None or args.phase == 3:
+        p1 = json.loads(p1_path.read_text())
         p2 = json.loads(p2_path.read_text())
-        log.info("=== PHASE 3: Generate fixes ===")
-        p3 = run_phase3(trajectories, p2, args.api_url, args.model)
+        log.info("=== PHASE 3: Generate fixes for ALL error steps ===")
+        p3 = run_phase3(trajectories, p1, p2, args.api_url, args.model)
         p3_path.write_text(json.dumps(p3, indent=2, ensure_ascii=False))
 
-    # Phase 4
     if args.phase is None or args.phase == 4:
         p2 = json.loads(p2_path.read_text())
         p3 = json.loads(p3_path.read_text())
-        log.info("=== PHASE 4: Rerun with Magentic-One ===")
+        log.info("=== PHASE 4: Rerun with Magentic-One (from last error step) ===")
         p4 = run_phase4(trajectories, p2, p3, output_dir, args.model, args.timeout)
         p4_path.write_text(json.dumps(p4, indent=2, ensure_ascii=False))
 
-    # Phase 5: Scoring
     if args.phase is None or args.phase == 5:
         p1 = json.loads(p1_path.read_text())
         p2 = json.loads(p2_path.read_text())
@@ -889,8 +1218,10 @@ def main():
         p5_path.write_text(json.dumps(p5, indent=2, ensure_ascii=False))
         s = p5["summary"]
         log.info("Flipped to correct: %d / %d", s["flipped_to_correct"], s["total_failures_analyzed"])
-        log.info("Projected accuracy: %d / 10 (%.0f%%)",
-                 s["projected_total_correct"], s["projected_total_accuracy"] * 100)
+        log.info("Projected accuracy: %d / %d (%.0f%%)",
+                 s["projected_total_correct"],
+                 s["total_failures_analyzed"] + s["original_correct_total"],
+                 s["projected_total_accuracy"] * 100)
 
 
 if __name__ == "__main__":
